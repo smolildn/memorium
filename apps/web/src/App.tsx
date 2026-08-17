@@ -13,7 +13,9 @@ import {
 import { ChatPanel } from "./components/ChatPanel";
 import { ImportPanel } from "./components/ImportPanel";
 import { MemoryCard } from "./components/MemoryCard";
+import { PlatformChrome, PlatformFeed } from "./components/PlatformFeed";
 import { StatsBar } from "./components/StatsBar";
+import { getSourceTheme, SOURCE_THEMES } from "./sourceThemes";
 
 type Tab = "timeline" | "today" | "import" | "ask";
 
@@ -79,6 +81,13 @@ export function App() {
   };
 
   const displayItems = tab === "today" ? todayItems : items;
+  const subjectName = memorial?.name ?? "Rose Martinez";
+  const activeTheme = sourceFilter ? getSourceTheme(sourceFilter) : null;
+  const usePlatformView =
+    activeTheme !== null &&
+    activeTheme.layout !== "default" &&
+    tab !== "import" &&
+    tab !== "ask";
 
   const tabLabels: Record<Tab, string> = {
     timeline: "Timeline",
@@ -137,6 +146,7 @@ export function App() {
             {Object.entries(SOURCE_LABELS).map(([k, v]) => (
               <option key={k} value={k}>
                 {v}
+                {SOURCE_THEMES[k]?.layout !== "default" ? " — platform view" : ""}
               </option>
             ))}
           </select>
@@ -165,32 +175,50 @@ export function App() {
             </p>
           </div>
         ) : (
-          <div className="layout">
-            <aside className="sidebar">
-              <h3>Through the years</h3>
-              <ul className="year-list">
-                {timeline.map((p) => (
-                  <li key={p.period}>
-                    <span>{p.period}</span>
-                    <span className="count">{p.count}</span>
-                  </li>
-                ))}
-              </ul>
-            </aside>
+          <div className={`layout ${usePlatformView ? "layout--platform" : ""}`}>
+            {!usePlatformView && (
+              <aside className="sidebar">
+                <h3>Through the years</h3>
+                <ul className="year-list">
+                  {timeline.map((p) => (
+                    <li key={p.period}>
+                      <span>{p.period}</span>
+                      <span className="count">{p.count}</span>
+                    </li>
+                  ))}
+                </ul>
+              </aside>
+            )}
             <section className="feed">
               {tab === "today" && (
                 <p className="today-label">
                   Memories on {formatDate(new Date().toISOString())}
                 </p>
               )}
-              {displayItems.map((item) => (
-                <MemoryCard
-                  key={item.id}
-                  item={item}
-                  sourceLabel={SOURCE_LABELS[item.source] ?? item.source}
-                  typeLabel={TYPE_LABELS[item.type] ?? item.type}
-                />
-              ))}
+              {usePlatformView && activeTheme && (
+                <>
+                  <p className="platform-view-label">
+                    Viewing as <strong>{activeTheme.label}</strong>
+                  </p>
+                  <div className={`platform-shell ${activeTheme.themeClass}`}>
+                    <PlatformChrome theme={activeTheme} subjectName={subjectName} />
+                    <PlatformFeed
+                      items={displayItems}
+                      theme={activeTheme}
+                      subjectName={subjectName}
+                    />
+                  </div>
+                </>
+              )}
+              {!usePlatformView &&
+                displayItems.map((item) => (
+                  <MemoryCard
+                    key={item.id}
+                    item={item}
+                    sourceLabel={SOURCE_LABELS[item.source] ?? item.source}
+                    typeLabel={TYPE_LABELS[item.type] ?? item.type}
+                  />
+                ))}
             </section>
           </div>
         )}

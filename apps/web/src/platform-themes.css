@@ -1,0 +1,590 @@
+/* ─── Platform visualizer shell ─── */
+
+.platform-shell {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  margin: 0 auto;
+}
+
+.platform-shell.theme-messenger,
+.platform-shell.theme-whatsapp,
+.platform-shell.theme-imessage,
+.platform-shell.theme-google-messages,
+.platform-shell.theme-sms {
+  max-width: 420px;
+}
+
+.platform-shell.theme-instagram {
+  max-width: 480px;
+}
+
+.platform-shell.theme-facebook {
+  max-width: 560px;
+}
+
+.platform-shell.theme-email {
+  max-width: 640px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ─── Chrome bars ─── */
+
+.platform-chrome {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  gap: 0.75rem;
+}
+
+.platform-chrome--chat {
+  background: var(--platform-chrome-bg, #fff);
+  border-bottom: 1px solid var(--platform-chrome-border, #e0e0e0);
+  color: var(--platform-chrome-text, #111);
+}
+
+.platform-chrome-back {
+  font-size: 1.75rem;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.platform-chrome-center {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.platform-chrome-center strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.platform-chrome-center span {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.65;
+}
+
+.platform-chrome-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--platform-accent, #888);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.platform-chrome-actions {
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
+
+.platform-chrome--facebook {
+  background: #1877f2;
+  color: #fff;
+  justify-content: space-between;
+}
+
+.platform-logo-fb {
+  font-weight: 700;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.platform-chrome-search {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  flex: 1;
+  max-width: 280px;
+  opacity: 0.9;
+}
+
+.platform-chrome--instagram {
+  background: #fff;
+  border-bottom: 1px solid #dbdbdb;
+  justify-content: space-between;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.platform-logo-ig {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.platform-chrome-icons {
+  font-size: 1.1rem;
+  letter-spacing: 0.5rem;
+}
+
+.platform-chrome--email {
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  justify-content: space-between;
+  color: #5f6368;
+}
+
+.platform-logo-email {
+  font-weight: 500;
+  color: #202124;
+}
+
+/* ─── Per-platform variables ─── */
+
+.theme-messenger {
+  --platform-bg: #fff;
+  --platform-chrome-bg: #fff;
+  --platform-chrome-border: #e4e6eb;
+  --platform-chrome-text: #050505;
+  --platform-accent: #0084ff;
+  --platform-bubble-out: #0084ff;
+  --platform-bubble-out-text: #fff;
+  --platform-bubble-in: #e4e6eb;
+  --platform-bubble-in-text: #050505;
+}
+
+.theme-whatsapp {
+  --platform-bg: #ece5dd;
+  --platform-chrome-bg: #075e54;
+  --platform-chrome-border: #075e54;
+  --platform-chrome-text: #fff;
+  --platform-accent: #25d366;
+  --platform-bubble-out: #dcf8c6;
+  --platform-bubble-out-text: #111;
+  --platform-bubble-in: #fff;
+  --platform-bubble-in-text: #111;
+}
+
+.theme-imessage {
+  --platform-bg: #fff;
+  --platform-chrome-bg: #f6f6f6;
+  --platform-chrome-border: #d1d1d6;
+  --platform-chrome-text: #000;
+  --platform-accent: #007aff;
+  --platform-bubble-out: #007aff;
+  --platform-bubble-out-text: #fff;
+  --platform-bubble-in: #e9e9eb;
+  --platform-bubble-in-text: #000;
+}
+
+.theme-google-messages,
+.theme-sms {
+  --platform-bg: #fafafa;
+  --platform-chrome-bg: #fff;
+  --platform-chrome-border: #dadce0;
+  --platform-chrome-text: #202124;
+  --platform-accent: #1a73e8;
+  --platform-bubble-out: #e3f2fd;
+  --platform-bubble-out-text: #202124;
+  --platform-bubble-in: #fff;
+  --platform-bubble-in-text: #202124;
+}
+
+.theme-sms {
+  --platform-bubble-out: #c8e6c9;
+  --platform-accent: #34a853;
+}
+
+.theme-facebook .platform-feed {
+  background: #f0f2f5;
+  padding: 0.75rem;
+}
+
+.theme-instagram .platform-feed {
+  background: #fafafa;
+}
+
+.theme-email .platform-feed {
+  background: #fff;
+}
+
+/* ─── Chat thread ─── */
+
+.platform-chat-thread {
+  background: var(--platform-bg, #fff);
+  padding: 0.75rem;
+  min-height: 320px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.platform-chat-date {
+  text-align: center;
+  font-size: 0.72rem;
+  color: #667;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  padding: 0.25rem 0.65rem;
+  margin: 0.5rem auto 0.75rem;
+  width: fit-content;
+}
+
+.theme-whatsapp .platform-chat-date {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.platform-bubble {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+  max-width: 85%;
+}
+
+.platform-bubble--out {
+  margin-left: auto;
+  flex-direction: row-reverse;
+}
+
+.platform-bubble--in {
+  margin-right: auto;
+}
+
+.platform-bubble-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #bbb;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.platform-bubble-avatar--self {
+  background: var(--platform-accent, #0084ff);
+}
+
+.platform-bubble-body {
+  background: var(--platform-bubble-in, #e4e6eb);
+  color: var(--platform-bubble-in-text, #111);
+  border-radius: 18px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  position: relative;
+}
+
+.platform-bubble--out .platform-bubble-body {
+  background: var(--platform-bubble-out, #0084ff);
+  color: var(--platform-bubble-out-text, #fff);
+  border-bottom-right-radius: 4px;
+}
+
+.platform-bubble--in .platform-bubble-body {
+  border-bottom-left-radius: 4px;
+}
+
+.platform-bubble-body p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.platform-bubble-sender {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #128c7e;
+  margin-bottom: 0.15rem;
+}
+
+.platform-bubble-time {
+  display: block;
+  font-size: 0.65rem;
+  opacity: 0.65;
+  margin-top: 0.2rem;
+  text-align: right;
+}
+
+.platform-ticks {
+  color: #34b7f1;
+}
+
+.theme-google-messages .platform-bubble-body,
+.theme-sms .platform-bubble-body {
+  border: 1px solid #dadce0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.theme-google-messages .platform-bubble--out .platform-bubble-body,
+.theme-sms .platform-bubble--out .platform-bubble-body {
+  border-color: transparent;
+}
+
+/* ─── Facebook posts ─── */
+
+.platform-fb-post {
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.platform-fb-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 0.85rem 0.35rem;
+}
+
+.platform-fb-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1877f2;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.platform-fb-header strong {
+  display: block;
+  font-size: 0.92rem;
+  color: #050505;
+}
+
+.platform-fb-header time {
+  display: block;
+  font-size: 0.78rem;
+  color: #65676b;
+}
+
+.platform-fb-text {
+  padding: 0.35rem 0.85rem 0.75rem;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #050505;
+  white-space: pre-wrap;
+}
+
+.platform-fb-media img {
+  width: 100%;
+  display: block;
+}
+
+.platform-fb-footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.65rem;
+  border-top: 1px solid #e4e6eb;
+  color: #65676b;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* ─── Instagram posts ─── */
+
+.platform-ig-post {
+  background: #fff;
+  border: 1px solid #dbdbdb;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.platform-ig-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem;
+}
+
+.platform-ig-avatar-ring {
+  padding: 2px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+}
+
+.platform-ig-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fafafa;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #262626;
+}
+
+.platform-ig-header strong {
+  font-size: 0.85rem;
+  color: #262626;
+}
+
+.platform-ig-media {
+  aspect-ratio: 1;
+  background: #efefef;
+  overflow: hidden;
+}
+
+.platform-ig-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.platform-ig-media--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8e8e8e;
+  font-size: 0.9rem;
+}
+
+.platform-ig-actions {
+  padding: 0.65rem 0.75rem 0.25rem;
+  font-size: 1.25rem;
+  letter-spacing: 0.75rem;
+}
+
+.platform-ig-likes {
+  padding: 0 0.75rem;
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #262626;
+}
+
+.platform-ig-caption {
+  padding: 0.25rem 0.75rem;
+  margin: 0;
+  font-size: 0.85rem;
+  color: #262626;
+  line-height: 1.4;
+}
+
+.platform-ig-caption strong {
+  margin-right: 0.35rem;
+}
+
+.platform-ig-time {
+  display: block;
+  padding: 0.35rem 0.75rem 0.75rem;
+  font-size: 0.68rem;
+  color: #8e8e8e;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Email ─── */
+
+.platform-email {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.platform-email-header {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.platform-email-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #1a73e8;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.platform-email-from {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.platform-email-from strong {
+  font-size: 0.9rem;
+  color: #202124;
+}
+
+.platform-email-from time {
+  font-size: 0.78rem;
+  color: #5f6368;
+  white-space: nowrap;
+}
+
+.platform-email-to {
+  display: block;
+  font-size: 0.78rem;
+  color: #5f6368;
+}
+
+.platform-email-meta h3 {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #202124;
+}
+
+.platform-email-body {
+  margin-top: 0.85rem;
+  padding-left: 3.25rem;
+  font-size: 0.9rem;
+  color: #3c4043;
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+/* ─── Layout when platform view is active ─── */
+
+.layout--platform {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+
+.layout--platform .sidebar {
+  display: none;
+}
+
+.platform-view-label {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+.platform-view-label strong {
+  color: var(--ink);
+}
