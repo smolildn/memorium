@@ -39,7 +39,7 @@ npx serve apps/web/dist -l 4173
 
 ### How it works
 
-1. `scripts/generate-static-demo.mjs` — exports demo vault as JSON to `apps/web/public/demo/`
+1. `scripts/generate-static-demo.mjs` — embeds demo vault data into the web bundle
 2. `VITE_DEMO_MODE=true` — web app uses client-side demo API instead of `/api`
 3. `VITE_BASE=/memorium/` — correct asset paths for project Pages URL
 4. `404.html` — copy of `index.html` for SPA routing
