@@ -32,4 +32,5 @@ cpSync(
 );
 
 console.log("\n✓ Pages build ready: apps/web/dist/");
-console.log("  Preview: npx serve apps/web/dist -l 4173");
+console.log("  Open: http://localhost:4173/memorium/");
+console.log("  Or run: npm run preview:pages");

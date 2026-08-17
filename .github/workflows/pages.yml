@@ -1,4 +1,4 @@
-# GitHub Pages — static demo UI (no backend)
+# GitHub Pages — static demo UI
 # Live at: https://smolildn.github.io/memorium/
 
 name: Deploy GitHub Pages
@@ -9,16 +9,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,16 +47,10 @@ jobs:
       - name: SPA fallback for GitHub Pages
         run: cp apps/web/dist/index.html apps/web/dist/404.html
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: apps/web/dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: apps/web/dist
+          publish_branch: gh-pages
+          force_orphan: true

@@ -14,6 +14,7 @@
     "poc": "node scripts/poc.mjs",
     "cli": "npm run start --workspace=@memorium/cli",
     "build:pages": "node scripts/build-pages.mjs",
+    "preview:pages": "node scripts/build-pages.mjs && npx --yes serve apps/web/dist -l 4173",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "engines": {
