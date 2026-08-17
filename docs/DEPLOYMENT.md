@@ -20,8 +20,9 @@ The Pages deployment is a **browse-only demo** with sample data for Rose Martine
 ### One-time GitHub setup
 
 1. Open **https://github.com/smolildn/memorium/settings/pages**
-2. Under **Build and deployment** → **Source**, choose **GitHub Actions**
-3. Push to `main` — the workflow `.github/workflows/pages.yml` deploys automatically
+2. Under **Build and deployment** → **Source**, choose **Deploy from a branch**
+3. Set branch to **gh-pages** and folder to **/** (root)
+4. Push to `main` — the workflow `.github/workflows/pages.yml` deploys automatically
 
 ### Live URL
 
