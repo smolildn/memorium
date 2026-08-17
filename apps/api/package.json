@@ -1,0 +1,23 @@
+{
+  "name": "@memorium/api",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "npm run build && node --watch dist/index.js",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@memorium/ai": "*",
+    "@memorium/core": "*",
+    "@memorium/ingest": "*",
+    "@memorium/query": "*",
+    "@memorium/storage": "*",
+    "hono": "^4.7.2"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^1.14.0",
+    "typescript": "^5.7.3"
+  }
+}

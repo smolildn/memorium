@@ -1,0 +1,25 @@
+{
+  "name": "@memorium/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "memorium": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@memorium/ai": "*",
+    "@memorium/core": "*",
+    "@memorium/demo": "*",
+    "@memorium/ingest": "*",
+    "@memorium/query": "*",
+    "@memorium/storage": "*",
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "memorium",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local-first memorial repository — ingest, query, and share a loved one's digital life",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev:api": "npm run dev --workspace=@memorium/api",
+    "dev:web": "npm run dev --workspace=@memorium/web",
+    "poc": "node scripts/poc.mjs",
+    "cli": "npm run start --workspace=@memorium/cli",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "typescript": "^5.7.3"
+  }
+}

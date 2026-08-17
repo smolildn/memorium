@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "text": "Hey Mom, running late for dinner tonight.",
+      "timestamp": 1577836800000,
+      "sender": "James",
+      "direction": "received"
+    },
+    {
+      "text": "No rush. I'll keep the food warm. Drive safe.",
+      "timestamp": 1577836920000,
+      "sender": "Rose Martinez",
+      "direction": "sent"
+    },
+    {
+      "text": "The garden roses are blooming early this year 🌹",
+      "timestamp": 1617235200000,
+      "sender": "Rose Martinez",
+      "direction": "sent"
+    }
+  ]
+}

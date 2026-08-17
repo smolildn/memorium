@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<smses count="3">
+  <sms protocol="0" address="+15551234567" date="1514764800000" type="1" body="Happy New Year Rose! Love you." contact_name="James" readable_date="Jan 1, 2018 12:00:00 AM" />
+  <sms protocol="0" address="+15551234567" date="1514764860000" type="2" body="Love you too mijo. Come for arroz con pollo Sunday." contact_name="James" readable_date="Jan 1, 2018 12:01:00 AM" />
+  <sms protocol="0" address="+15559876543" date="1609459200000" type="1" body="Tía, can you send the flan recipe?" contact_name="Maria" readable_date="Jan 1, 2021 12:00:00 AM" />
+</smses>
