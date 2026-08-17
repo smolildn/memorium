@@ -83,6 +83,10 @@ body {
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: center;
+  max-width: 100%;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+  scrollbar-width: thin;
 }
 
 .stat-pill {
@@ -91,6 +95,28 @@ body {
   padding: 0.35rem 0.85rem;
   border-radius: 999px;
   font-size: 0.85rem;
+}
+
+.stat-pill-btn {
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.stat-pill-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.stat-pill-btn.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+
+.stat-pill-btn.active strong {
+  color: var(--paper);
 }
 
 .stat-pill.muted {

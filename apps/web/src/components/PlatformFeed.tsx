@@ -38,9 +38,11 @@ interface FeedProps {
 }
 
 export function PlatformFeed({ items, theme, subjectName }: FeedProps) {
-  const sorted = [...items].sort(
-    (a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime(),
-  );
+  const sorted = [...items].sort((a, b) => {
+    const ta = new Date(a.occurredAt).getTime();
+    const tb = new Date(b.occurredAt).getTime();
+    return theme.layout === "chat" ? ta - tb : tb - ta;
+  });
 
   if (theme.layout === "chat") {
     const dayGroups = groupByDay(sorted);
@@ -65,6 +67,9 @@ export function PlatformFeed({ items, theme, subjectName }: FeedProps) {
 
   return (
     <div className={`platform-feed platform-feed--${theme.layout}`}>
+      <div className="platform-feed-count" aria-live="polite">
+        {sorted.length} {sorted.length === 1 ? "memory" : "memories"}
+      </div>
       {sorted.map((item) => (
         <PlatformMemoryCard
           key={item.id}

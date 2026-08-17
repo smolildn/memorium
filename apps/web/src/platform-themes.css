@@ -1,10 +1,39 @@
 /* ─── Platform visualizer shell ─── */
 
 .platform-shell {
+  display: flex;
+  flex-direction: column;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   margin: 0 auto;
+  height: min(820px, 85vh);
+  max-height: 85vh;
+}
+
+.platform-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.platform-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.platform-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 999px;
+}
+
+.platform-chrome {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .platform-shell.theme-messenger,
@@ -213,6 +242,37 @@
 
 .theme-instagram .platform-feed {
   background: #fafafa;
+  padding-bottom: 1rem;
+}
+
+.theme-instagram .platform-feed--instagram {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.platform-feed-count {
+  padding: 0.5rem 0.85rem;
+  font-size: 0.75rem;
+  color: #8e8e8e;
+  text-align: center;
+  background: inherit;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.theme-instagram .platform-feed-count {
+  background: #fafafa;
+}
+
+.theme-facebook .platform-feed-count {
+  background: #f0f2f5;
+}
+
+.theme-email .platform-feed-count {
+  background: #fff;
 }
 
 .theme-email .platform-feed {
@@ -224,9 +284,7 @@
 .platform-chat-thread {
   background: var(--platform-bg, #fff);
   padding: 0.75rem;
-  min-height: 320px;
-  max-height: 70vh;
-  overflow-y: auto;
+  min-height: 100%;
 }
 
 .platform-chat-date {
@@ -341,10 +399,11 @@
 .platform-fb-post {
   background: #fff;
   border-radius: 8px;
-  margin-bottom: 0.75rem;
+  margin: 0 0 0.75rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  flex-shrink: 0;
 }
 
 .platform-fb-header {
@@ -408,8 +467,9 @@
   background: #fff;
   border: 1px solid #dbdbdb;
   border-radius: 4px;
-  margin-bottom: 1rem;
+  margin: 0 0.5rem 0.75rem;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  flex-shrink: 0;
 }
 
 .platform-ig-header {
@@ -572,6 +632,12 @@
 .layout--platform {
   grid-template-columns: 1fr;
   justify-items: center;
+  width: 100%;
+}
+
+.layout--platform .feed {
+  width: 100%;
+  max-width: 520px;
 }
 
 .layout--platform .sidebar {

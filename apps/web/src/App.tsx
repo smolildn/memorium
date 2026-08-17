@@ -80,7 +80,16 @@ export function App() {
     }
   };
 
-  const displayItems = tab === "today" ? todayItems : items;
+  const displayItems = (() => {
+    const list = tab === "today" ? todayItems : items;
+    if (!sourceFilter) return list;
+    return list.filter((item) => item.source === sourceFilter);
+  })();
+
+  const handleSourceChange = (source: string) => {
+    setSourceFilter(source);
+    setQuery("");
+  };
   const subjectName = memorial?.name ?? "Rose Martinez";
   const activeTheme = sourceFilter ? getSourceTheme(sourceFilter) : null;
   const usePlatformView =
@@ -110,7 +119,11 @@ export function App() {
         <p className="subtitle">
           A private place to gather, search, and share a life&apos;s digital memories.
         </p>
-        <StatsBar stats={stats} />
+        <StatsBar
+          stats={stats}
+          activeSource={sourceFilter}
+          onSourceChange={handleSourceChange}
+        />
       </header>
 
       <nav className="tabs">
@@ -139,7 +152,7 @@ export function App() {
           </form>
           <select
             value={sourceFilter}
-            onChange={(e) => setSourceFilter(e.target.value)}
+            onChange={(e) => handleSourceChange(e.target.value)}
             aria-label="Filter by source"
           >
             <option value="">All sources</option>
@@ -202,11 +215,13 @@ export function App() {
                   </p>
                   <div className={`platform-shell ${activeTheme.themeClass}`}>
                     <PlatformChrome theme={activeTheme} subjectName={subjectName} />
-                    <PlatformFeed
-                      items={displayItems}
-                      theme={activeTheme}
-                      subjectName={subjectName}
-                    />
+                    <div className="platform-scroll">
+                      <PlatformFeed
+                        items={displayItems}
+                        theme={activeTheme}
+                        subjectName={subjectName}
+                      />
+                    </div>
                   </div>
                 </>
               )}
