@@ -9,5 +9,6 @@ dist/
 data/
 uploads/
 apps/web/public/demo/*.json
+apps/web/src/generated/
 .DS_Store
 Thumbs.db

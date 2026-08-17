@@ -7,8 +7,13 @@ import type {
   SearchResult,
   TimelinePeriod,
 } from "./api";
-
-const demoRoot = `${import.meta.env.BASE_URL}demo/`;
+import {
+  demoImportSources,
+  demoItems,
+  demoMemorial,
+  demoStats,
+  demoTimeline,
+} from "./generated/demo-data";
 
 let cache: {
   memorial: Memorial;
@@ -21,20 +26,12 @@ let cache: {
 async function loadDemo() {
   if (cache) return cache;
 
-  const [memorial, itemsRes, timeline, stats, importSources] = await Promise.all([
-    fetch(`${demoRoot}memorial.json`).then((r) => r.json() as Promise<Memorial>),
-    fetch(`${demoRoot}items.json`).then((r) => r.json() as Promise<SearchResult>),
-    fetch(`${demoRoot}timeline.json`).then((r) => r.json() as Promise<TimelinePeriod[]>),
-    fetch(`${demoRoot}stats.json`).then((r) => r.json() as Promise<Record<string, number>>),
-    fetch(`${demoRoot}import-sources.json`).then((r) => r.json() as Promise<ImportSource[]>),
-  ]);
-
   cache = {
-    memorial,
-    items: itemsRes.items,
-    timeline,
-    stats,
-    importSources,
+    memorial: demoMemorial,
+    items: demoItems,
+    timeline: demoTimeline,
+    stats: demoStats,
+    importSources: demoImportSources,
   };
   return cache;
 }

@@ -35,16 +35,14 @@ jobs:
           npm run build --workspace=@memorium/demo
           npm run build --workspace=@memorium/ingest
 
+      - name: Generate bundled demo data
+        run: node scripts/generate-static-demo.mjs
+
       - name: Build web app (demo mode)
         run: npm run build --workspace=@memorium/web
         env:
           VITE_DEMO_MODE: "true"
           VITE_BASE: /memorium/
-
-      - name: Generate static demo JSON into dist
-        run: node scripts/generate-static-demo.mjs
-        env:
-          DEMO_OUT_DIR: apps/web/dist/demo
 
       - name: SPA fallback for GitHub Pages
         run: cp apps/web/dist/index.html apps/web/dist/404.html

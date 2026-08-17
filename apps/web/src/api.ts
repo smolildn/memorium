@@ -7,12 +7,18 @@ export interface Memorial {
 
 export interface MemoryItem {
   id: string;
+  memorialId?: string;
   type: string;
   source: string;
+  sourceId?: string;
   title?: string;
   text: string;
   occurredAt: string;
+  importedAt?: string;
+  personIds: string[];
+  mediaRefs?: Array<{ path: string; mimeType?: string }>;
   metadata: Record<string, unknown>;
+  contentHash?: string;
 }
 
 export interface SearchResult {
