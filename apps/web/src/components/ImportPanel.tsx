@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { api, type ImportResult, type ImportSource } from "../api";
+import { api, isDemoMode, type ImportResult, type ImportSource } from "../api";
 
 interface Props {
   onImported: () => void;
@@ -53,10 +53,17 @@ export function ImportPanel({ onImported }: Props) {
     <div className="import-panel">
       <div className="import-intro">
         <h2>Import memories</h2>
-        <p>
-          Upload exports from Facebook, Instagram, email, WhatsApp, Google Messages,
-          Android SMS, or iPhone iMessage. Files stay on your machine.
-        </p>
+        {isDemoMode() ? (
+          <p className="import-hint">
+            Export guides are shown below. To actually import files, clone the repo and run{" "}
+            <code>npm run poc</code> locally — GitHub Pages cannot store your data.
+          </p>
+        ) : (
+          <p>
+            Upload exports from Facebook, Instagram, email, WhatsApp, Google Messages,
+            Android SMS, or iPhone iMessage. Files stay on your machine.
+          </p>
+        )}
       </div>
 
       <label className="import-label" htmlFor="source-select">
@@ -139,10 +146,10 @@ export function ImportPanel({ onImported }: Props) {
       <button
         type="button"
         className="import-btn"
-        disabled={!file || uploading}
+        disabled={!file || uploading || isDemoMode()}
         onClick={() => void handleUpload()}
       >
-        {uploading ? "Importing…" : "Import into vault"}
+        {isDemoMode() ? "Import requires local app" : uploading ? "Importing…" : "Import into vault"}
       </button>
 
       {error && <div className="error-banner">{error}</div>}

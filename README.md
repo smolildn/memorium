@@ -34,6 +34,16 @@ Memorium is the **infrastructure layer**: ingest everything, normalize it, query
                     └──────────────────┘
 ```
 
+## Deploy to GitHub Pages
+
+The web UI can be deployed as a **static demo** (browse sample data + export guides). Import and AI require the local app.
+
+1. Enable **GitHub Actions** as Pages source in repo Settings → Pages
+2. Push to `main` — CI deploys automatically
+3. Live at **https://smolildn.github.io/memorium/**
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for details.
+
 ## Quick start (POC)
 
 ```bash

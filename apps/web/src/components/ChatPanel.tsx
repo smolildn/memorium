@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { api, type ChatResponse } from "../api";
+import { api, isDemoMode, type ChatResponse } from "../api";
 
 interface Props {
   subjectName: string;
@@ -44,10 +44,17 @@ export function ChatPanel({ subjectName }: Props) {
     <div className="chat-panel">
       <div className="chat-intro">
         <h2>Explore memories</h2>
-        <p>
-          Ask questions about {subjectName}&apos;s archive. Responses are grounded in
-          imported sources — this is reflection, not impersonation.
-        </p>
+        {isDemoMode() ? (
+          <p>
+            AI chat requires the local app with an OpenAI API key. Clone the repo and run{" "}
+            <code>npm run poc</code> to enable reflective Q&amp;A.
+          </p>
+        ) : (
+          <p>
+            Ask questions about {subjectName}&apos;s archive. Responses are grounded in
+            imported sources — this is reflection, not impersonation.
+          </p>
+        )}
       </div>
 
       <div className="starters">
@@ -79,8 +86,8 @@ export function ChatPanel({ subjectName }: Props) {
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
         />
-        <button type="submit" disabled={loading}>
-          {loading ? "Thinking…" : "Ask"}
+        <button type="submit" disabled={loading || isDemoMode()}>
+          {isDemoMode() ? "Requires local app" : loading ? "Thinking…" : "Ask"}
         </button>
       </form>
 

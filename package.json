@@ -13,6 +13,7 @@
     "dev:web": "npm run dev --workspace=@memorium/web",
     "poc": "node scripts/poc.mjs",
     "cli": "npm run start --workspace=@memorium/cli",
+    "build:pages": "node scripts/build-pages.mjs",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "engines": {

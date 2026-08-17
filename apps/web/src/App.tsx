@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   api,
   formatDate,
+  isDemoMode,
   SOURCE_LABELS,
   TYPE_LABELS,
   type MemoryItem,
@@ -90,6 +91,12 @@ export function App() {
     <div className="app">
       <header className="hero">
         <p className="eyebrow">Memorium</p>
+        {isDemoMode() && (
+          <div className="demo-banner" role="status">
+            Demo mode — browse sample data here. For import, AI, and your own vault,{" "}
+            <a href="https://github.com/smolildn/memorium#quick-start-poc">run locally</a>.
+          </div>
+        )}
         <h1>{memorial?.name ?? "Memorial Archive"}</h1>
         <p className="subtitle">
           A private place to gather, search, and share a life&apos;s digital memories.
