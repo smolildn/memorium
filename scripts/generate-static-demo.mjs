@@ -3,14 +3,16 @@
  * Run after building @memorium/core and @memorium/demo.
  */
 import { writeFile, mkdir } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { createDemoItems, demoSubjectName } from "../packages/demo/dist/index.js";
 import { IMPORT_SOURCES } from "../packages/ingest/dist/import-sources.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const outDir = join(root, "apps/web/public/demo");
+const outDir = process.env.DEMO_OUT_DIR
+  ? resolve(process.env.DEMO_OUT_DIR)
+  : join(root, "apps/web/public/demo");
 
 const memorialId = "00000000-0000-4000-8000-000000000001";
 const memorial = {

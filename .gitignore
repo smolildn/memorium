@@ -8,5 +8,6 @@ dist/
 *.sqlite
 data/
 uploads/
+apps/web/public/demo/*.json
 .DS_Store
 Thumbs.db

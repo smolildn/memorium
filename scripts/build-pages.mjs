@@ -6,6 +6,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const distDir = join(root, "apps/web/dist");
 
 function run(cmd, args, env = {}) {
   const r = spawnSync(cmd, args, {
@@ -20,16 +21,15 @@ function run(cmd, args, env = {}) {
 run("npm", ["run", "build", "--workspace=@memorium/core"]);
 run("npm", ["run", "build", "--workspace=@memorium/demo"]);
 run("npm", ["run", "build", "--workspace=@memorium/ingest"]);
-run("node", ["scripts/generate-static-demo.mjs"]);
 run("npm", ["run", "build", "--workspace=@memorium/web"], {
   VITE_DEMO_MODE: "true",
   VITE_BASE: "/memorium/",
 });
+run("node", ["scripts/generate-static-demo.mjs"], {
+  DEMO_OUT_DIR: join(distDir, "demo"),
+});
 
-cpSync(
-  join(root, "apps/web/dist/index.html"),
-  join(root, "apps/web/dist/404.html"),
-);
+cpSync(join(distDir, "index.html"), join(distDir, "404.html"));
 
 console.log("\n✓ Pages build ready: apps/web/dist/");
 console.log("  Open: http://localhost:4173/memorium/");
