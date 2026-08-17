@@ -1,4 +1,5 @@
 import { formatDate, type MemoryItem } from "../api";
+import { mediaUrl } from "../mediaUrl";
 
 interface Props {
   item: MemoryItem;
@@ -21,6 +22,20 @@ export function MemoryCard({ item, sourceLabel, typeLabel }: Props) {
       </header>
       {item.title && <h3>{item.title}</h3>}
       {sender && <p className="sender">From {sender}</p>}
+      {item.mediaRefs && item.mediaRefs.length > 0 && (
+        <div className="memory-media">
+          {item.mediaRefs.map((ref) => (
+            <img
+              key={ref.id ?? ref.vaultPath ?? ref.path}
+              src={mediaUrl(ref)}
+              alt={item.title ?? "Memory photo"}
+              loading="lazy"
+              width={ref.width}
+              height={ref.height}
+            />
+          ))}
+        </div>
+      )}
       {item.text && <p className="memory-text">{item.text}</p>}
     </article>
   );

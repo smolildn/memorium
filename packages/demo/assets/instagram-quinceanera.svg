@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Quinceañera celebration with pink decorations">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fce4ec"/>
+      <stop offset="100%" stop-color="#f7f3ed"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <circle cx="540" cy="420" r="220" fill="#f8bbd9" opacity="0.5"/>
+  <circle cx="540" cy="420" r="160" fill="#f48fb1" opacity="0.45"/>
+  <rect x="340" y="620" width="400" height="280" rx="20" fill="#fffdf9" stroke="#e2d9cc" stroke-width="4"/>
+  <text x="540" y="720" text-anchor="middle" font-family="Georgia, serif" font-size="72" fill="#c41e3a">15</text>
+  <text x="540" y="790" text-anchor="middle" font-family="Georgia, serif" font-size="36" fill="#6b5e4f">Sofia</text>
+  <circle cx="250" cy="300" r="40" fill="#ffd54f" opacity="0.8"/>
+  <circle cx="830" cy="320" r="35" fill="#ffd54f" opacity="0.7"/>
+  <circle cx="180" cy="500" r="28" fill="#ffd54f" opacity="0.6"/>
+  <circle cx="900" cy="480" r="32" fill="#ffd54f" opacity="0.65"/>
+  <path d="M540 180 L560 240 L620 240 L572 278 L592 338 L540 300 L488 338 L508 278 L460 240 L520 240 Z" fill="#ffd54f"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">Feliz quinceañera · Jun 2021</text>
+</svg>

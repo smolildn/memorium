@@ -16,7 +16,15 @@ export interface MemoryItem {
   occurredAt: string;
   importedAt?: string;
   personIds: string[];
-  mediaRefs?: Array<{ path: string; mimeType?: string }>;
+  mediaRefs?: Array<{
+    id?: string;
+    vaultPath?: string;
+    path?: string;
+    mimeType?: string;
+    originalFilename?: string;
+    width?: number;
+    height?: number;
+  }>;
   metadata: Record<string, unknown>;
   contentHash?: string;
 }
