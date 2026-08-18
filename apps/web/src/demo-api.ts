@@ -86,6 +86,8 @@ const DEMO_PEOPLE: Person[] = [
   },
   { id: "demo-maria", name: "Maria", relationship: "Niece" },
   { id: "demo-james", name: "James", relationship: "Son" },
+  { id: "demo-sofia", name: "Sofia", relationship: "Great-niece" },
+  { id: "demo-antonio", name: "Antonio Martinez", relationship: "Husband" },
 ];
 
 export const demoApi = {

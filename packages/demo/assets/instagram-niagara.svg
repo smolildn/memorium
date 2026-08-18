@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Niagara Falls road trip">
+  <defs>
+    <linearGradient id="water" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="#e0f2fe"/>
+  <rect x="0" y="480" width="1080" height="600" fill="url(#water)"/>
+  <path d="M200 480 Q340 620 480 480 Q620 340 760 480 Q900 620 1040 480 L1040 1080 L200 1080 Z" fill="#bae6fd" opacity="0.6"/>
+  <rect x="80" y="720" width="920" height="120" rx="8" fill="#64748b"/>
+  <rect x="140" y="640" width="280" height="100" rx="12" fill="#dc2626"/>
+  <circle cx="200" cy="780" r="40" fill="#1e293b"/>
+  <circle cx="880" cy="780" r="40" fill="#1e293b"/>
+  <circle cx="420" cy="600" r="28" fill="#f4d6b8"/>
+  <circle cx="540" cy="590" r="30" fill="#e8c4a0"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">Niagara Falls · no map needed</text>
+</svg>

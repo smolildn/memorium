@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Spring porch with rocking chair and flowers">
+  <rect width="1080" height="1080" fill="#ecfdf5"/>
+  <rect x="0" y="600" width="1080" height="480" fill="#d6d3d1"/>
+  <rect x="120" y="200" width="840" height="420" fill="#fef3c7"/>
+  <rect x="160" y="240" width="200" height="320" fill="#7dd3fc" opacity="0.5"/>
+  <rect x="720" y="240" width="200" height="320" fill="#7dd3fc" opacity="0.5"/>
+  <rect x="380" y="480" width="320" height="140" fill="#92400e"/>
+  <ellipse cx="280" cy="520" rx="50" ry="70" fill="#78350f"/>
+  <ellipse cx="800" cy="520" rx="50" ry="70" fill="#78350f"/>
+  <rect x="460" y="380" width="160" height="120" rx="20" fill="#a16207"/>
+  <circle cx="200" cy="560" r="35" fill="#e85d75"/>
+  <circle cx="250" cy="540" r="28" fill="#f0627a"/>
+  <circle cx="830" cy="550" r="32" fill="#e85d75"/>
+  <circle cx="880" cy="530" r="26" fill="#c41e3a"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">Front porch · April 2020</text>
+</svg>

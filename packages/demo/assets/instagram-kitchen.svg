@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Sunday kitchen with arroz con pollo cooking">
+  <defs>
+    <linearGradient id="warm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff7ed"/>
+      <stop offset="100%" stop-color="#fed7aa"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#warm)"/>
+  <rect x="80" y="120" width="920" height="720" rx="24" fill="#fffdf9" stroke="#e2d9cc" stroke-width="4"/>
+  <rect x="140" y="420" width="380" height="280" rx="120" fill="#78716c"/>
+  <ellipse cx="330" cy="520" rx="140" ry="60" fill="#fbbf24"/>
+  <ellipse cx="330" cy="500" rx="120" ry="45" fill="#f59e0b"/>
+  <circle cx="280" cy="480" r="18" fill="#dc2626"/>
+  <circle cx="360" cy="490" r="16" fill="#16a34a"/>
+  <circle cx="320" cy="510" r="14" fill="#ea580c"/>
+  <rect x="620" y="280" width="280" height="420" rx="12" fill="#d6d3d1"/>
+  <rect x="650" y="320" width="80" height="100" rx="8" fill="#fef3c7"/>
+  <rect x="760" y="320" width="80" height="100" rx="8" fill="#fecaca"/>
+  <rect x="650" y="450" width="80" height="100" rx="8" fill="#bbf7d0"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">Sunday arroz con pollo</text>
+</svg>

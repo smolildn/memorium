@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="James graduation day">
+  <rect width="1080" height="1080" fill="#1e3a5f"/>
+  <rect x="100" y="100" width="880" height="880" rx="12" fill="#f8fafc"/>
+  <polygon points="540,220 720,320 360,320" fill="#1e293b"/>
+  <rect x="420" y="320" width="240" height="20" fill="#1e293b"/>
+  <circle cx="540" cy="480" r="90" fill="#f4d6b8"/>
+  <rect x="400" y="580" width="280" height="320" rx="20" fill="#1e293b"/>
+  <rect x="430" y="620" width="220" height="180" fill="#334155"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">James · University of Illinois · 2019</text>
+</svg>
