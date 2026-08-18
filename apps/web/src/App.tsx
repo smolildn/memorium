@@ -56,7 +56,7 @@ export function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [slideshowOpen, setSlideshowOpen] = useState(false);
-  const [slideshowStart, setSlideshowStart] = useState(0);
+  const [slideshowStartItemId, setSlideshowStartItemId] = useState<string | undefined>(undefined);
   const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
   const [showAiConsent, setShowAiConsent] = useState(false);
   const [onboardingDone, markOnboardingDone] = useLocalFlag("memorium-onboarding-v1");
@@ -204,12 +204,14 @@ export function App() {
 
   const handleSurprise = () => {
     const pick = randomMemory(allItems);
-    if (pick) scrollToMemory(pick.id);
+    if (pick) {
+      setSlideshowStartItemId(pick.id);
+      setSlideshowOpen(true);
+    }
   };
 
   const handleSlideshow = (startId?: string) => {
-    const idx = startId ? allItems.findIndex((i) => i.id === startId) : 0;
-    setSlideshowStart(Math.max(idx, 0));
+    setSlideshowStartItemId(startId);
     setSlideshowOpen(true);
   };
 
@@ -264,7 +266,7 @@ export function App() {
         <SlideshowModal
           items={allItems}
           subjectName={subjectName}
-          startIndex={slideshowStart}
+          startItemId={slideshowStartItemId}
           onClose={() => setSlideshowOpen(false)}
         />
       )}

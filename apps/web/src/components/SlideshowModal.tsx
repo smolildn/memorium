@@ -6,15 +6,18 @@ import { mediaUrl } from "../mediaUrl";
 interface Props {
   items: MemoryItem[];
   subjectName: string;
-  startIndex?: number;
+  startItemId?: string;
   onClose: () => void;
 }
 
-export function SlideshowModal({ items, subjectName, startIndex = 0, onClose }: Props) {
+export function SlideshowModal({ items, subjectName, startItemId, onClose }: Props) {
   const sorted = [...items].sort(
     (a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime(),
   );
-  const [index, setIndex] = useState(startIndex);
+  const initialIndex = startItemId
+    ? Math.max(0, sorted.findIndex((i) => i.id === startItemId))
+    : 0;
+  const [index, setIndex] = useState(initialIndex);
 
   const current = sorted[index];
 
@@ -41,11 +44,17 @@ export function SlideshowModal({ items, subjectName, startIndex = 0, onClose }: 
   const imageRef = current.mediaRefs?.[0];
 
   return (
-    <div className="slideshow-overlay" role="dialog" aria-modal="true" aria-label="Memory lane slideshow">
+    <div
+      className="slideshow-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Memory lane slideshow"
+      onClick={onClose}
+    >
       <button type="button" className="slideshow-close" onClick={onClose} aria-label="Close">
         ✕
       </button>
-      <div className="slideshow-content">
+      <div className="slideshow-content" onClick={(e) => e.stopPropagation()}>
         <p className="slideshow-progress">
           {index + 1} / {sorted.length}
         </p>
@@ -67,7 +76,7 @@ export function SlideshowModal({ items, subjectName, startIndex = 0, onClose }: 
         {current.text && imageRef && <p className="slideshow-caption">{current.text}</p>}
         <p className="slideshow-subject">Memories of {subjectName}</p>
       </div>
-      <div className="slideshow-nav">
+      <div className="slideshow-nav" onClick={(e) => e.stopPropagation()}>
         <button type="button" onClick={prev} disabled={index === 0}>
           ← Prev
         </button>
