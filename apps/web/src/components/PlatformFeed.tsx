@@ -9,6 +9,7 @@ import {
   type SourceTheme,
 } from "../sourceThemes";
 import { mediaUrl } from "../mediaUrl";
+import { ArchiveBadge } from "./ArchiveBadge";
 
 interface Props {
   item: MemoryItem;
@@ -45,19 +46,26 @@ export function PlatformFeed({ items, theme, subjectName }: FeedProps) {
   });
 
   if (theme.layout === "chat") {
-    const dayGroups = groupByDay(sorted);
+    const threads = groupChatThreads(sorted);
     return (
       <div className="platform-chat-thread">
-        {dayGroups.map((group) => (
-          <div key={group.date} className="platform-chat-day">
-            <div className="platform-chat-date">{formatChatDate(group.items[0]!.occurredAt)}</div>
-            {group.items.map((item) => (
-              <PlatformMemoryCard
-                key={item.id}
-                item={item}
-                theme={theme}
-                subjectName={subjectName}
-              />
+        {threads.map((thread) => (
+          <div key={thread.label} className="platform-chat-thread-group">
+            {threads.length > 1 && (
+              <div className="platform-chat-thread-label">{thread.label}</div>
+            )}
+            {groupByDay(thread.items).map((group) => (
+              <div key={group.date} className="platform-chat-day">
+                <div className="platform-chat-date">{formatChatDate(group.items[0]!.occurredAt)}</div>
+                {group.items.map((item) => (
+                  <PlatformMemoryCard
+                    key={item.id}
+                    item={item}
+                    theme={theme}
+                    subjectName={subjectName}
+                  />
+                ))}
+              </div>
             ))}
           </div>
         ))}
@@ -82,6 +90,20 @@ export function PlatformFeed({ items, theme, subjectName }: FeedProps) {
   );
 }
 
+function groupChatThreads(items: MemoryItem[]): Array<{ label: string; items: MemoryItem[] }> {
+  const map = new Map<string, MemoryItem[]>();
+  for (const item of items) {
+    const label =
+      typeof item.metadata.chat === "string"
+        ? item.metadata.chat
+        : getSenderName(item);
+    const list = map.get(label) ?? [];
+    list.push(item);
+    map.set(label, list);
+  }
+  return [...map.entries()].map(([label, threadItems]) => ({ label, items: threadItems }));
+}
+
 function ChatBubble({ item, theme, subjectName }: Props) {
   const outgoing = isFromSubject(item, subjectName);
   const sender = getSenderName(item);
@@ -102,6 +124,7 @@ function ChatBubble({ item, theme, subjectName }: Props) {
         {!outgoing && theme.id === "whatsapp" && (
           <span className="platform-bubble-sender">{sender}</span>
         )}
+        <ArchiveBadge date={item.occurredAt} />
         {item.text && <p>{item.text}</p>}
         <time dateTime={item.occurredAt} className="platform-bubble-time">
           {formatChatTime(item.occurredAt)}
@@ -131,6 +154,7 @@ function FacebookPost({ item, subjectName }: Omit<Props, "theme">) {
         <div>
           <strong>{subjectName}</strong>
           <time dateTime={item.occurredAt}>{formatDate(item.occurredAt)} · 🌎</time>
+          <ArchiveBadge date={item.occurredAt} />
         </div>
       </header>
       {item.text && <p className="platform-fb-text">{item.text}</p>}
@@ -159,7 +183,10 @@ function InstagramPost({ item, subjectName }: Omit<Props, "theme">) {
         <div className="platform-ig-avatar-ring">
           <div className="platform-ig-avatar">{getInitials(subjectName)}</div>
         </div>
-        <strong>{subjectName.split(" ")[0]?.toLowerCase() ?? "rose"}</strong>
+        <div>
+          <strong>{subjectName.split(" ")[0]?.toLowerCase() ?? "rose"}</strong>
+          <ArchiveBadge date={item.occurredAt} />
+        </div>
       </header>
       {item.mediaRefs && item.mediaRefs.length > 0 ? (
         <div className="platform-ig-media">

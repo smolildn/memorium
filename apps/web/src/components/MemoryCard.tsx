@@ -1,13 +1,15 @@
 import { formatDate, type MemoryItem } from "../api";
 import { mediaUrl } from "../mediaUrl";
+import { ArchiveBadge } from "./ArchiveBadge";
 
 interface Props {
   item: MemoryItem;
   sourceLabel: string;
   typeLabel: string;
+  onImageClick?: (src: string, alt: string) => void;
 }
 
-export function MemoryCard({ item, sourceLabel, typeLabel }: Props) {
+export function MemoryCard({ item, sourceLabel, typeLabel, onImageClick }: Props) {
   const sender =
     typeof item.metadata.sender === "string" ? item.metadata.sender : null;
 
@@ -16,6 +18,7 @@ export function MemoryCard({ item, sourceLabel, typeLabel }: Props) {
       <header className="memory-header">
         <time dateTime={item.occurredAt}>{formatDate(item.occurredAt)}</time>
         <div className="badges">
+          <ArchiveBadge date={item.occurredAt} />
           <span className="badge source">{sourceLabel}</span>
           <span className="badge type">{typeLabel}</span>
         </div>
@@ -25,14 +28,20 @@ export function MemoryCard({ item, sourceLabel, typeLabel }: Props) {
       {item.mediaRefs && item.mediaRefs.length > 0 && (
         <div className="memory-media">
           {item.mediaRefs.map((ref) => (
-            <img
+            <button
               key={ref.id ?? ref.vaultPath ?? ref.path}
-              src={mediaUrl(ref)}
-              alt={item.title ?? "Memory photo"}
-              loading="lazy"
-              width={ref.width}
-              height={ref.height}
-            />
+              type="button"
+              className="memory-media-btn"
+              onClick={() => onImageClick?.(mediaUrl(ref), item.title ?? "Memory photo")}
+            >
+              <img
+                src={mediaUrl(ref)}
+                alt={item.title ?? "Memory photo"}
+                loading="lazy"
+                width={ref.width}
+                height={ref.height}
+              />
+            </button>
           ))}
         </div>
       )}

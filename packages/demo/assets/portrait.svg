@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Rose Martinez portrait">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8dcc4"/>
+      <stop offset="100%" stop-color="#d4c4a8"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <circle cx="200" cy="160" r="72" fill="#c4956a"/>
+  <ellipse cx="200" cy="290" rx="110" ry="90" fill="#8b6914" opacity="0.35"/>
+  <circle cx="175" cy="150" r="6" fill="#2c2419"/>
+  <circle cx="225" cy="150" r="6" fill="#2c2419"/>
+  <path d="M185 175 Q200 188 215 175" stroke="#2c2419" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <text x="200" y="370" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#2c2419" opacity="0.6">Rose Martinez</text>
+</svg>

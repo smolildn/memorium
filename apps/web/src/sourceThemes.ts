@@ -7,6 +7,7 @@ export interface SourceTheme {
   themeClass: string;
   /** Short tagline shown in the platform chrome bar */
   chromeTitle: string;
+  accentColor?: string;
 }
 
 export const SOURCE_THEMES: Record<string, SourceTheme> = {
@@ -16,6 +17,7 @@ export const SOURCE_THEMES: Record<string, SourceTheme> = {
     layout: "facebook",
     themeClass: "theme-facebook",
     chromeTitle: "Facebook",
+    accentColor: "#1877f2",
   },
   meta_instagram: {
     id: "meta_instagram",
@@ -23,6 +25,7 @@ export const SOURCE_THEMES: Record<string, SourceTheme> = {
     layout: "instagram",
     themeClass: "theme-instagram",
     chromeTitle: "Instagram",
+    accentColor: "#e1306c",
   },
   meta_messenger: {
     id: "meta_messenger",
@@ -30,6 +33,7 @@ export const SOURCE_THEMES: Record<string, SourceTheme> = {
     layout: "chat",
     themeClass: "theme-messenger",
     chromeTitle: "Messenger",
+    accentColor: "#0084ff",
   },
   whatsapp: {
     id: "whatsapp",
@@ -37,6 +41,7 @@ export const SOURCE_THEMES: Record<string, SourceTheme> = {
     layout: "chat",
     themeClass: "theme-whatsapp",
     chromeTitle: "WhatsApp",
+    accentColor: "#25d366",
   },
   imessage: {
     id: "imessage",
@@ -44,6 +49,7 @@ export const SOURCE_THEMES: Record<string, SourceTheme> = {
     layout: "chat",
     themeClass: "theme-imessage",
     chromeTitle: "Messages",
+    accentColor: "#007aff",
   },
   google_messages: {
     id: "google_messages",
@@ -51,6 +57,7 @@ export const SOURCE_THEMES: Record<string, SourceTheme> = {
     layout: "chat",
     themeClass: "theme-google-messages",
     chromeTitle: "Messages",
+    accentColor: "#1a73e8",
   },
   sms: {
     id: "sms",
@@ -58,6 +65,7 @@ export const SOURCE_THEMES: Record<string, SourceTheme> = {
     layout: "chat",
     themeClass: "theme-sms",
     chromeTitle: "Messages",
+    accentColor: "#34a853",
   },
   email: {
     id: "email",
@@ -65,6 +73,7 @@ export const SOURCE_THEMES: Record<string, SourceTheme> = {
     layout: "email",
     themeClass: "theme-email",
     chromeTitle: "Mail",
+    accentColor: "#ea4335",
   },
   manual: {
     id: "manual",

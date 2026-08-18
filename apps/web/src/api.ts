@@ -3,6 +3,10 @@ export interface Memorial {
   name: string;
   description?: string;
   createdAt: string;
+  bornAt?: string;
+  diedAt?: string;
+  tribute?: string;
+  portraitPath?: string;
 }
 
 export interface MemoryItem {

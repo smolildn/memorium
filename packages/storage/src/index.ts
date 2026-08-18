@@ -95,6 +95,40 @@ export class Vault {
     };
   }
 
+  getSubjectPerson(): Person | null {
+    const row = this.db
+      .prepare("SELECT * FROM people WHERE is_subject = 1 LIMIT 1")
+      .get() as Record<string, string | number> | undefined;
+    if (!row) return null;
+    return {
+      id: row["id"] as string,
+      name: row["name"] as string,
+      relationship: (row["relationship"] as string) ?? undefined,
+      isSubject: Boolean(row["is_subject"]),
+      avatarPath: (row["avatar_path"] as string) ?? undefined,
+      bornAt: (row["born_at"] as string) ?? undefined,
+      diedAt: (row["died_at"] as string) ?? undefined,
+    };
+  }
+
+  createShareGrant(label?: string): { token: string; expiresAt: string } {
+    const memorial = this.getMemorial();
+    if (!memorial) throw new Error("No memorial initialized");
+
+    const token = generateId();
+    const now = nowIso();
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    this.db
+      .prepare(
+        `INSERT INTO share_grants (id, memorial_id, token, role, label, created_at, expires_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(generateId(), memorial.id, token, "viewer", label ?? null, now, expiresAt);
+
+    return { token, expiresAt };
+  }
+
   insertPerson(person: Person): void {
     this.db
       .prepare(

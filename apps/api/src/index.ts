@@ -6,9 +6,11 @@ import { cors } from "hono/cors";
 
 import { createProviderFromEnv, MemorialChat, semanticSearch } from "@memorium/ai";
 import { SearchQuerySchema } from "@memorium/core";
-import { IMPORT_SOURCES, formatExportGuide, getImportSource, runIngest, saveUpload } from "@memorium/ingest";
+import { IMPORT_SOURCES, runIngest, saveUpload } from "@memorium/ingest";
 import { listItems, onThisDay, search, stats, timeline } from "@memorium/query";
 import { Vault } from "@memorium/storage";
+
+import { authMiddleware, getMaxUploadBytes } from "./middleware.js";
 
 const VAULT_PATH = resolve(process.env.MEMORIUM_VAULT_PATH ?? "./data/vault");
 const PORT = parseInt(process.env.MEMORIUM_API_PORT ?? "3847", 10);
@@ -16,9 +18,26 @@ const HOST = process.env.MEMORIUM_API_HOST ?? "127.0.0.1";
 
 const app = new Hono();
 app.use("*", cors());
+app.use("*", authMiddleware);
 
 function getVault(): Vault {
   return Vault.open(VAULT_PATH);
+}
+
+function memorialPayload(vault: Vault) {
+  const memorial = vault.getMemorial();
+  if (!memorial) return null;
+  const person = vault.getSubjectPerson();
+  return {
+    id: memorial.id,
+    name: memorial.name,
+    description: memorial.description,
+    createdAt: memorial.createdAt,
+    bornAt: person?.bornAt,
+    diedAt: person?.diedAt,
+    tribute: memorial.description,
+    portraitPath: person?.avatarPath,
+  };
 }
 
 app.get("/", (c) => {
@@ -35,9 +54,12 @@ app.get("/", (c) => {
       "GET /import/sources",
       "POST /import",
       "POST /chat",
+      "POST /share",
     ],
   });
 });
+
+app.get("/health", (c) => c.json({ ok: true }));
 
 app.get("/import/sources", (c) => {
   return c.json(IMPORT_SOURCES);
@@ -62,6 +84,11 @@ app.post("/import", async (c) => {
     }
 
     const uploadFile = file as File;
+    if (uploadFile.size > getMaxUploadBytes()) {
+      vault.close();
+      return c.json({ error: "File too large" }, 413);
+    }
+
     const buffer = Buffer.from(await uploadFile.arrayBuffer());
     const inputPath = await saveUpload(VAULT_PATH, uploadFile.name, buffer);
 
@@ -97,10 +124,10 @@ app.post("/import", async (c) => {
 
 app.get("/memorial", (c) => {
   const vault = getVault();
-  const memorial = vault.getMemorial();
+  const payload = memorialPayload(vault);
   vault.close();
-  if (!memorial) return c.json({ error: "No memorial initialized" }, 404);
-  return c.json(memorial);
+  if (!payload) return c.json({ error: "No memorial initialized" }, 404);
+  return c.json(payload);
 });
 
 app.get("/items", (c) => {
@@ -122,6 +149,7 @@ app.get("/search", (c) => {
     offset: c.req.query("offset") ? parseInt(c.req.query("offset")!, 10) : 0,
     from: c.req.query("from"),
     to: c.req.query("to"),
+    sources: c.req.query("source") ? [c.req.query("source")] : undefined,
   });
 
   if (!parsed.success) return c.json({ error: parsed.error.message }, 400);
@@ -183,6 +211,30 @@ app.post("/chat", async (c) => {
 
   vault.close();
   return c.json(response);
+});
+
+app.post("/share", async (c) => {
+  const vault = getVault();
+  try {
+    const body = (await c.req.json<{ label?: string }>().catch(() => ({ label: undefined }))) as {
+      label?: string;
+    };
+    const grant = vault.createShareGrant(body.label);
+    vault.close();
+    return c.json({
+      ok: true,
+      token: grant.token,
+      expiresAt: grant.expiresAt,
+      url: `http://${HOST}:${PORT}?token=${grant.token}`,
+      note: "Share tokens are stored locally. Full read-only access via token is coming in a future release.",
+    });
+  } catch (err) {
+    vault.close();
+    return c.json(
+      { error: err instanceof Error ? err.message : "Share creation failed" },
+      500,
+    );
+  }
 });
 
 console.log(`Memorium API starting on http://${HOST}:${PORT}`);

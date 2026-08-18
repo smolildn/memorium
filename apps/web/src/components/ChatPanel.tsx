@@ -4,6 +4,9 @@ import { api, isDemoMode, type ChatResponse } from "../api";
 
 interface Props {
   subjectName: string;
+  hasConsent: boolean;
+  onNeedConsent: () => void;
+  onCitationClick: (itemId: string) => void;
 }
 
 const STARTERS = [
@@ -12,7 +15,7 @@ const STARTERS = [
   "What messages did they send about college?",
 ];
 
-export function ChatPanel({ subjectName }: Props) {
+export function ChatPanel({ subjectName, hasConsent, onNeedConsent, onCitationClick }: Props) {
   const [question, setQuestion] = useState("");
   const [response, setResponse] = useState<ChatResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -20,6 +23,10 @@ export function ChatPanel({ subjectName }: Props) {
 
   const ask = async (q: string) => {
     if (!q.trim()) return;
+    if (!hasConsent && !isDemoMode()) {
+      onNeedConsent();
+      return;
+    }
     setLoading(true);
     setAiError(null);
     setResponse(null);
@@ -101,7 +108,15 @@ export function ChatPanel({ subjectName }: Props) {
               <h4>From the archive</h4>
               <ul>
                 {response.citations.map((c) => (
-                  <li key={c.itemId}>{c.excerpt}</li>
+                  <li key={c.itemId}>
+                    <button
+                      type="button"
+                      className="citation-link"
+                      onClick={() => onCitationClick(c.itemId)}
+                    >
+                      {c.excerpt}
+                    </button>
+                  </li>
                 ))}
               </ul>
             </div>

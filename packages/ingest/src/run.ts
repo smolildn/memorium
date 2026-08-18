@@ -1,5 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { resolve, join, sep, normalize, dirname } from "node:path";
 
 import AdmZip from "adm-zip";
 
@@ -67,8 +67,17 @@ export async function saveUpload(
 
   if (safeName.toLowerCase().endsWith(".zip")) {
     const extractDir = `${dest}-extracted`;
+    await mkdir(extractDir, { recursive: true });
     const zip = new AdmZip(dest);
-    zip.extractAllTo(extractDir, true);
+    for (const entry of zip.getEntries()) {
+      if (entry.isDirectory) continue;
+      const target = normalize(join(extractDir, entry.entryName));
+      if (!target.startsWith(normalize(extractDir + sep))) {
+        throw new Error(`Unsafe path in zip: ${entry.entryName}`);
+      }
+      await mkdir(dirname(target), { recursive: true });
+      await writeFile(target, entry.getData());
+    }
     return extractDir;
   }
 

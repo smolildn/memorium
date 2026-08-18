@@ -1,4 +1,5 @@
 import { SOURCE_LABELS } from "../api";
+import { SOURCE_THEMES } from "../sourceThemes";
 
 interface Props {
   stats: Record<string, number>;
@@ -14,6 +15,7 @@ export function StatsBar({ stats, activeSource, onSourceChange }: Props) {
       id: k.replace("source:", ""),
       count: v,
       label: SOURCE_LABELS[k.replace("source:", "")] ?? k.replace("source:", ""),
+      color: SOURCE_THEMES[k.replace("source:", "")]?.accentColor,
     }))
     .sort((a, b) => b.count - a.count);
 
@@ -34,6 +36,13 @@ export function StatsBar({ stats, activeSource, onSourceChange }: Props) {
           key={s.id}
           type="button"
           className={`stat-pill stat-pill-btn ${activeSource === s.id ? "active" : ""}`}
+          style={
+            activeSource === s.id && s.color
+              ? { background: s.color, borderColor: s.color }
+              : s.color
+                ? { borderColor: s.color }
+                : undefined
+          }
           onClick={() => onSourceChange(activeSource === s.id ? "" : s.id)}
           aria-pressed={activeSource === s.id}
         >

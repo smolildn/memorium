@@ -25,8 +25,12 @@ const memorialId = "00000000-0000-4000-8000-000000000001";
 const memorial = {
   id: memorialId,
   name: demoSubjectName(),
-  description: "Static demo vault for GitHub Pages",
+  description: "Mother, gardener, and keeper of Sunday recipes. Every memory here is preserved with love.",
   createdAt: "2026-01-01T00:00:00.000Z",
+  bornAt: "1945-03-12T00:00:00.000Z",
+  diedAt: "2022-11-08T00:00:00.000Z",
+  tribute: "Mother, gardener, and keeper of Sunday recipes.",
+  portraitPath: "demo/media/portrait.svg",
 };
 
 const items = createDemoItems(memorialId);

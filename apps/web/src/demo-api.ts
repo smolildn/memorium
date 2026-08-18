@@ -81,9 +81,12 @@ export const demoApi = {
     return filterItems(items, params);
   },
 
-  search: async (q: string) => {
+  search: async (q: string, source?: string) => {
     const { items } = await loadDemo();
-    return searchItems(items, q);
+    const result = searchItems(items, q);
+    if (!source) return result;
+    const filtered = result.items.filter((i) => i.source === source);
+    return { items: filtered, total: filtered.length };
   },
 
   timeline: async () => (await loadDemo()).timeline,
