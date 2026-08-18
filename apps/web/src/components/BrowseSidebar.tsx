@@ -70,6 +70,21 @@ export function BrowseSidebar({
     setPeopleOpen(!!personFilter);
   }, [personFilter]);
 
+  const togglePeriodSection = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setPeriodOpen((open) => !open);
+  };
+
+  const toggleSourceSection = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setSourceOpen((open) => !open);
+  };
+
+  const togglePeopleSection = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
+    setPeopleOpen((open) => !open);
+  };
+
   return (
     <>
       {mobileOpen && (
@@ -114,12 +129,8 @@ export function BrowseSidebar({
           <button type="submit">Go</button>
         </form>
 
-        <details
-          className="sidebar-section"
-          open={periodOpen}
-          onToggle={(e) => setPeriodOpen(e.currentTarget.open)}
-        >
-          <summary>
+        <details className="sidebar-section" {...(periodOpen ? { open: true } : {})}>
+          <summary onClick={togglePeriodSection}>
             Through the years
             {periodFilter && (
               <span className="sidebar-active-tag">{formatPeriod(periodFilter)}</span>
@@ -151,12 +162,8 @@ export function BrowseSidebar({
           </ul>
         </details>
 
-        <details
-          className="sidebar-section"
-          open={sourceOpen}
-          onToggle={(e) => setSourceOpen(e.currentTarget.open)}
-        >
-          <summary>
+        <details className="sidebar-section" {...(sourceOpen ? { open: true } : {})}>
+          <summary onClick={toggleSourceSection}>
             Sources
             {sourceFilter && (
               <span className="sidebar-active-tag">{SOURCE_LABELS[sourceFilter] ?? sourceFilter}</span>
@@ -192,12 +199,8 @@ export function BrowseSidebar({
         </details>
 
         {(people.length > 0 || messageSenders.length > 0) && (
-          <details
-            className="sidebar-section"
-            open={peopleOpen}
-            onToggle={(e) => setPeopleOpen(e.currentTarget.open)}
-          >
-            <summary>
+          <details className="sidebar-section" {...(peopleOpen ? { open: true } : {})}>
+            <summary onClick={togglePeopleSection}>
               People
               {personFilter && <span className="sidebar-active-tag">{personFilter}</span>}
             </summary>

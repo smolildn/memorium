@@ -322,6 +322,10 @@ body {
   padding: 0.5rem 0;
 }
 
+.sidebar-section:not([open]) > :not(summary) {
+  display: none;
+}
+
 .sidebar-section summary {
   font-weight: 600;
   font-size: 0.9rem;
