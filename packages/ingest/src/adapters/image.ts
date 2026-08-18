@@ -1,8 +1,10 @@
-import { readdir, stat } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import { basename, extname, join } from "node:path";
 
 import type { IngestResult, MemoryItem, SourceAdapter } from "@memorium/core";
 import { contentHash, generateId, nowIso } from "@memorium/core";
+
+import { extractPhotoExif } from "../exif.js";
 
 const IMAGE_EXTS = new Set([
   ".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".heif", ".tiff",
@@ -55,7 +57,16 @@ export class ImageAdapter implements SourceAdapter {
         const ext = extname(file).toLowerCase();
         const isVideo = VIDEO_EXTS.has(ext);
         const filename = basename(file);
-        const occurredAt = fileStat.mtime.toISOString();
+        const fallbackOccurredAt = fileStat.mtime.toISOString();
+        let occurredAt = fallbackOccurredAt;
+        let metadata: Record<string, unknown> = { originalPath: file, sizeBytes: fileStat.size };
+
+        if (!isVideo) {
+          const buffer = await readFile(file);
+          const exif = await extractPhotoExif(buffer, fallbackOccurredAt);
+          occurredAt = exif.occurredAt;
+          metadata = { ...metadata, ...exif.fields };
+        }
 
         yield {
           id: generateId(),
@@ -75,7 +86,7 @@ export class ImageAdapter implements SourceAdapter {
               originalFilename: filename,
             },
           ],
-          metadata: { originalPath: file, sizeBytes: fileStat.size },
+          metadata,
           contentHash: contentHash(["manual", file, String(fileStat.size), occurredAt]),
         };
         imported++;

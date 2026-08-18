@@ -1,8 +1,8 @@
-import exifr from "exifr";
-
 import type { MemoryItem } from "@memorium/core";
 import { contentHash, generateId, nowIso } from "@memorium/core";
 import { storeVaultMedia } from "@memorium/storage";
+
+import { extractPhotoExif } from "./exif.js";
 
 const IMAGE_MIMES: Record<string, string> = {
   ".jpg": "image/jpeg",
@@ -35,30 +35,8 @@ export async function ingestPhotoUpload(
   const mimeType = guessMime(originalFilename);
   const importedAt = nowIso();
 
-  let occurredAt = importedAt;
-  const metadata: Record<string, unknown> = { tags: [] as string[] };
-  const exif = await exifr.parse(buffer, {
-    pick: ["DateTimeOriginal", "CreateDate", "latitude", "longitude", "Make", "Model"],
-  }).catch(() => null);
-
-  if (exif) {
-    const taken = exif.DateTimeOriginal ?? exif.CreateDate;
-    if (taken) {
-      occurredAt =
-        taken instanceof Date ? taken.toISOString() : new Date(String(taken)).toISOString();
-    }
-    if (typeof exif.latitude === "number" && typeof exif.longitude === "number") {
-      metadata.lat = exif.latitude;
-      metadata.lng = exif.longitude;
-    }
-    const camera = [exif.Make, exif.Model].filter(Boolean).join(" ").trim();
-    if (camera) metadata.camera = camera;
-    metadata.exif = {
-      takenAt: occurredAt,
-      make: exif.Make,
-      model: exif.Model,
-    };
-  }
+  const { occurredAt, fields } = await extractPhotoExif(buffer, importedAt);
+  const metadata: Record<string, unknown> = { tags: [] as string[], ...fields };
 
   const item: MemoryItem = {
     id: generateId(),

@@ -164,7 +164,7 @@ export const IMPORT_SOURCES: ImportSourceGuide[] = [
       "Zip the folder if uploading via web UI, or use CLI: npm run cli -- import ./path/to/photos",
     ],
     tips: [
-      "Memorium uses file dates for timeline ordering — EXIF extraction coming in a future update",
+      "EXIF capture date, GPS, and camera info are extracted automatically on upload and folder import",
       "For Google Photos Takeout, import the media folder after unzipping",
     ],
   },
