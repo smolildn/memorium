@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
+    "postinstall": "node scripts/setup-face-models.mjs",
     "dev:api": "npm run dev --workspace=@memorium/api",
     "dev:web": "npm run dev --workspace=@memorium/web",
     "poc": "node scripts/poc.mjs",

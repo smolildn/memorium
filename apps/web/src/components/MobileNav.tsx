@@ -1,4 +1,4 @@
-type Tab = "today" | "timeline" | "collections" | "map" | "import" | "ask";
+type Tab = "today" | "timeline" | "photos" | "profile" | "collections" | "map" | "import" | "ask";
 
 interface Props {
   tab: Tab;
@@ -8,10 +8,9 @@ interface Props {
 const TABS: Array<{ id: Tab; label: string; icon: string }> = [
   { id: "today", label: "Today", icon: "☀" },
   { id: "timeline", label: "Browse", icon: "☰" },
-  { id: "map", label: "Places", icon: "📍" },
-  { id: "collections", label: "Themes", icon: "✦" },
+  { id: "photos", label: "Photos", icon: "🖼" },
+  { id: "profile", label: "Profile", icon: "◉" },
   { id: "ask", label: "Ask", icon: "?" },
-  { id: "import", label: "Import", icon: "↓" },
 ];
 
 export function MobileNav({ tab, onTabChange }: Props) {

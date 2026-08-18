@@ -8,6 +8,7 @@ import {
   TYPE_LABELS,
   type MemoryItem,
   type Memorial,
+  type Person,
   type TimelinePeriod,
 } from "./api";
 import { AiConsentModal } from "./components/AiConsentModal";
@@ -22,6 +23,8 @@ import { MobileNav } from "./components/MobileNav";
 import { OnboardingModal } from "./components/OnboardingModal";
 import { OnThisDayView } from "./components/OnThisDayView";
 import { PersonHero } from "./components/PersonHero";
+import { PhotosView } from "./components/PhotosView";
+import { ProfileView } from "./components/ProfileView";
 import { PlatformChrome, PlatformFeed } from "./components/PlatformFeed";
 import { SlideshowModal } from "./components/SlideshowModal";
 import { StatsBar } from "./components/StatsBar";
@@ -29,10 +32,11 @@ import { useLocalFlag } from "./hooks/useLocalFlag";
 import { getSourceTheme, SOURCE_THEMES } from "./sourceThemes";
 import { extractPeople, randomMemory } from "./utils/memorial";
 
-type Tab = "today" | "timeline" | "collections" | "map" | "import" | "ask";
+type Tab = "today" | "timeline" | "photos" | "profile" | "collections" | "map" | "import" | "ask";
 
 export function App() {
   const [memorial, setMemorial] = useState<Memorial | null>(null);
+  const [people, setPeople] = useState<Person[]>([]);
   const [allItems, setAllItems] = useState<MemoryItem[]>([]);
   const [timeline, setTimeline] = useState<TimelinePeriod[]>([]);
   const [todayItems, setTodayItems] = useState<MemoryItem[]>([]);
@@ -56,14 +60,16 @@ export function App() {
     setLoading(true);
     setError(null);
     try {
-      const [m, i, t, td, s] = await Promise.all([
+      const [m, p, i, t, td, s] = await Promise.all([
         api.memorial(),
+        api.people(),
         api.items({ limit: 500 }),
         api.timeline(),
         api.today(),
         api.stats(),
       ]);
       setMemorial(m);
+      setPeople(p);
       setAllItems(i.items);
       setTimeline(t);
       setTodayItems(td.items);
@@ -125,7 +131,7 @@ export function App() {
     return list;
   }, [baseItems, sourceFilter, personFilter]);
 
-  const people = useMemo(() => extractPeople(allItems), [allItems]);
+  const messageSenders = useMemo(() => extractPeople(allItems), [allItems]);
   const subjectName = memorial?.name ?? "Rose Martinez";
   const activeTheme = sourceFilter ? getSourceTheme(sourceFilter) : null;
   const usePlatformView =
@@ -161,6 +167,8 @@ export function App() {
   const tabLabels: Record<Tab, string> = {
     today: "On This Day",
     timeline: "Browse",
+    photos: "Photos",
+    profile: "Profile",
     collections: "Themes",
     map: "Places",
     import: "Import",
@@ -198,6 +206,7 @@ export function App() {
           stats={stats}
           onSurprise={handleSurprise}
           onSlideshow={() => handleSlideshow()}
+          onOpenProfile={() => setTab("profile")}
         />
       )}
 
@@ -211,7 +220,7 @@ export function App() {
       <StatsBar stats={stats} activeSource={sourceFilter} onSourceChange={handleSourceChange} />
 
       <nav className="tabs desktop-tabs">
-        {(["today", "timeline", "collections", "map", "import", "ask"] as Tab[]).map((t) => (
+        {(["today", "timeline", "photos", "profile", "collections", "map", "import", "ask"] as Tab[]).map((t) => (
           <button
             key={t}
             type="button"
@@ -223,7 +232,12 @@ export function App() {
         ))}
       </nav>
 
-      {tab !== "ask" && tab !== "import" && tab !== "collections" && tab !== "map" && (
+      {tab !== "ask" &&
+        tab !== "import" &&
+        tab !== "collections" &&
+        tab !== "map" &&
+        tab !== "photos" &&
+        tab !== "profile" && (
         <section className="toolbar">
           <form className="search-form" onSubmit={handleSearch}>
             <input
@@ -247,14 +261,14 @@ export function App() {
               </option>
             ))}
           </select>
-          {people.length > 0 && (
+          {messageSenders.length > 0 && (
             <select
               value={personFilter}
               onChange={(e) => setPersonFilter(e.target.value)}
               aria-label="Filter by person"
             >
               <option value="">All people</option>
-              {people.map((p) => (
+              {messageSenders.map((p) => (
                 <option key={p} value={p}>
                   {p}
                 </option>
@@ -285,6 +299,21 @@ export function App() {
             allItems={allItems}
             activeCollection={collectionId}
             onCollectionChange={setCollectionId}
+          />
+        ) : tab === "photos" ? (
+          <PhotosView
+            allItems={allItems}
+            people={people}
+            onItemsChange={setAllItems}
+          />
+        ) : tab === "profile" && memorial ? (
+          <ProfileView
+            memorial={memorial}
+            people={people}
+            onUpdated={(m, p) => {
+              setMemorial(m);
+              setPeople(p);
+            }}
           />
         ) : tab === "map" ? (
           <MapView

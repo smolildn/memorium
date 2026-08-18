@@ -8,9 +8,10 @@ interface Props {
   stats: Record<string, number>;
   onSurprise: () => void;
   onSlideshow: () => void;
+  onOpenProfile?: () => void;
 }
 
-export function PersonHero({ memorial, allItems, stats, onSurprise, onSlideshow }: Props) {
+export function PersonHero({ memorial, allItems, stats, onSurprise, onSlideshow, onOpenProfile }: Props) {
   const total = stats.total ?? allItems.length;
   const sourceCount = Object.keys(stats).filter((k) => k.startsWith("source:")).length;
   const quote = quoteOfDay(allItems);
@@ -43,7 +44,15 @@ export function PersonHero({ memorial, allItems, stats, onSurprise, onSlideshow 
         </div>
         <div className="person-hero-text">
           <p className="eyebrow">Memorium</p>
-          <h1>{memorial.name}</h1>
+          <h1>
+            {onOpenProfile ? (
+              <button type="button" className="person-name-btn" onClick={onOpenProfile}>
+                {memorial.name}
+              </button>
+            ) : (
+              memorial.name
+            )}
+          </h1>
           {lifespan && <p className="person-lifespan">{lifespan}</p>}
           {memorial.tribute && <p className="person-tribute">{memorial.tribute}</p>}
           <p className="person-stats-line">

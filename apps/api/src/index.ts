@@ -1,14 +1,15 @@
 import { resolve } from "node:path";
+import { readFileSync, existsSync } from "node:fs";
 
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
 import { MemorialChat, resolveProviderFromEnv, semanticSearch } from "@memorium/ai";
-import { SearchQuerySchema } from "@memorium/core";
-import { IMPORT_SOURCES, runIngest, saveUpload } from "@memorium/ingest";
+import { SearchQuerySchema, generateId, nowIso, type Person } from "@memorium/core";
+import { IMPORT_SOURCES, ingestPhotoUpload, runIngest, saveUpload } from "@memorium/ingest";
 import { listItems, onThisDay, search, stats, timeline } from "@memorium/query";
-import { Vault } from "@memorium/storage";
+import { Vault, resolveVaultMediaPath, storeVaultMedia } from "@memorium/storage";
 
 import { authMiddleware, getMaxUploadBytes, setShareValidator } from "./middleware.js";
 
@@ -62,6 +63,12 @@ app.get("/", (c) => {
       "POST /import",
       "POST /chat",
       "POST /share",
+      "GET /people",
+      "PATCH /memorial",
+      "POST /memorial/portrait",
+      "POST /photos/upload",
+      "PATCH /items/:id",
+      "GET /media/*",
     ],
   });
 });
@@ -135,6 +142,221 @@ app.get("/memorial", (c) => {
   vault.close();
   if (!payload) return c.json({ error: "No memorial initialized" }, 404);
   return c.json(payload);
+});
+
+app.patch("/memorial", async (c) => {
+  const vault = getVault();
+  try {
+    const body = await c.req.json<{
+      name?: string;
+      tribute?: string;
+      bornAt?: string;
+      diedAt?: string;
+    }>();
+
+    if (body.name !== undefined) {
+      vault.updateMemorial({ name: body.name });
+    }
+    if (body.tribute !== undefined) {
+      vault.updateMemorial({ description: body.tribute });
+    }
+
+    const subject = vault.getSubjectPerson();
+    if (subject) {
+      const personPatch: Partial<Person> = {};
+      if (body.name !== undefined) personPatch.name = body.name;
+      if (body.bornAt !== undefined) personPatch.bornAt = body.bornAt;
+      if (body.diedAt !== undefined) personPatch.diedAt = body.diedAt;
+      if (Object.keys(personPatch).length > 0) {
+        vault.updatePerson(subject.id, personPatch);
+      }
+    }
+
+    const payload = memorialPayload(vault);
+    vault.close();
+    if (!payload) return c.json({ error: "No memorial initialized" }, 404);
+    return c.json(payload);
+  } catch (err) {
+    vault.close();
+    return c.json({ error: err instanceof Error ? err.message : "Update failed" }, 500);
+  }
+});
+
+app.post("/memorial/portrait", async (c) => {
+  const vault = getVault();
+  try {
+    const body = await c.req.parseBody({ all: true });
+    const file = body["file"];
+    if (!file || typeof file === "string") {
+      vault.close();
+      return c.json({ error: "file is required" }, 400);
+    }
+
+    const uploadFile = file as File;
+    if (uploadFile.size > getMaxUploadBytes()) {
+      vault.close();
+      return c.json({ error: "File too large" }, 413);
+    }
+
+    const subject = vault.getSubjectPerson();
+    if (!subject) {
+      vault.close();
+      return c.json({ error: "No subject person" }, 404);
+    }
+
+    const buffer = Buffer.from(await uploadFile.arrayBuffer());
+    const avatarPath = await storeVaultMedia(VAULT_PATH, buffer, uploadFile.name, "avatars");
+    vault.updatePerson(subject.id, { avatarPath });
+
+    const payload = memorialPayload(vault);
+    vault.close();
+    return c.json(payload);
+  } catch (err) {
+    vault.close();
+    return c.json({ error: err instanceof Error ? err.message : "Portrait upload failed" }, 500);
+  }
+});
+
+app.get("/people", (c) => {
+  const vault = getVault();
+  const people = vault.listPeople();
+  vault.close();
+  return c.json(people);
+});
+
+app.post("/people", async (c) => {
+  const vault = getVault();
+  try {
+    const body = await c.req.json<{ name: string; relationship?: string }>();
+    if (!body.name?.trim()) {
+      vault.close();
+      return c.json({ error: "name is required" }, 400);
+    }
+
+    const person: Person = {
+      id: generateId(),
+      name: body.name.trim(),
+      relationship: body.relationship?.trim(),
+      isSubject: false,
+    };
+    vault.insertPerson(person);
+    vault.close();
+    return c.json(person, 201);
+  } catch (err) {
+    vault.close();
+    return c.json({ error: err instanceof Error ? err.message : "Create person failed" }, 500);
+  }
+});
+
+app.patch("/people/:id", async (c) => {
+  const vault = getVault();
+  try {
+    const id = c.req.param("id");
+    const body = await c.req.json<Partial<Person>>();
+    const ok = vault.updatePerson(id, {
+      name: body.name,
+      relationship: body.relationship,
+      bornAt: body.bornAt,
+      diedAt: body.diedAt,
+      avatarPath: body.avatarPath,
+      faceEmbedding: body.faceEmbedding,
+    });
+    if (!ok) {
+      vault.close();
+      return c.json({ error: "Person not found" }, 404);
+    }
+    const person = vault.getPerson(id);
+    vault.close();
+    return c.json(person);
+  } catch (err) {
+    vault.close();
+    return c.json({ error: err instanceof Error ? err.message : "Update failed" }, 500);
+  }
+});
+
+app.post("/photos/upload", async (c) => {
+  const vault = getVault();
+  const memorial = vault.getMemorial();
+  if (!memorial) {
+    vault.close();
+    return c.json({ error: "No memorial initialized" }, 404);
+  }
+
+  try {
+    const body = await c.req.parseBody({ all: true });
+    const entries = body["file"];
+    const files = Array.isArray(entries) ? entries : entries ? [entries] : [];
+
+    const uploaded: Array<{ id: string; title?: string; stored: boolean }> = [];
+    for (const entry of files) {
+      if (typeof entry === "string") continue;
+      const uploadFile = entry as File;
+      if (uploadFile.size > getMaxUploadBytes()) continue;
+
+      const buffer = Buffer.from(await uploadFile.arrayBuffer());
+      const { item } = await ingestPhotoUpload(VAULT_PATH, memorial.id, buffer, uploadFile.name);
+      const stored = vault.storeItem(item);
+      uploaded.push({ id: item.id, title: item.title, stored });
+    }
+
+    vault.close();
+    return c.json({ ok: true, uploaded, count: uploaded.length });
+  } catch (err) {
+    vault.close();
+    return c.json({ error: err instanceof Error ? err.message : "Photo upload failed" }, 500);
+  }
+});
+
+app.patch("/items/:id", async (c) => {
+  const vault = getVault();
+  try {
+    const id = c.req.param("id");
+    const body = await c.req.json<{
+      title?: string;
+      text?: string;
+      personIds?: string[];
+      metadata?: Record<string, unknown>;
+    }>();
+
+    const updated = vault.updateItem(id, body);
+    if (!updated) {
+      vault.close();
+      return c.json({ error: "Item not found" }, 404);
+    }
+    vault.close();
+    return c.json(updated);
+  } catch (err) {
+    vault.close();
+    return c.json({ error: err instanceof Error ? err.message : "Update failed" }, 500);
+  }
+});
+
+const MIME_BY_EXT: Record<string, string> = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".svg": "image/svg+xml",
+  ".mp4": "video/mp4",
+};
+
+app.get("/media/*", (c) => {
+  const relPath = c.req.path.replace(/^\/media\//, "");
+  const full = resolveVaultMediaPath(VAULT_PATH, `media/${relPath}`);
+  if (!full || !existsSync(full)) {
+    return c.json({ error: "Not found" }, 404);
+  }
+
+  const ext = full.slice(full.lastIndexOf(".")).toLowerCase();
+  const mime = MIME_BY_EXT[ext] ?? "application/octet-stream";
+  const data = readFileSync(full);
+  return new Response(data, {
+    headers: {
+      "Content-Type": mime,
+      "Cache-Control": "private, max-age=3600",
+    },
+  });
 });
 
 app.get("/items", (c) => {

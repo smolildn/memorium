@@ -22,6 +22,7 @@ run("npm", ["run", "build", "--workspace=@memorium/core"]);
 run("npm", ["run", "build", "--workspace=@memorium/demo"]);
 run("npm", ["run", "build", "--workspace=@memorium/ingest"]);
 run("node", ["scripts/generate-static-demo.mjs"]);
+run("node", ["scripts/setup-face-models.mjs"]);
 run("npm", ["run", "build", "--workspace=@memorium/web"], {
   VITE_DEMO_MODE: "true",
   VITE_BASE: "/memorium/",

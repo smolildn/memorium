@@ -5,6 +5,7 @@ const MAX_UPLOAD_BYTES = parseInt(process.env.MEMORIUM_MAX_UPLOAD_MB ?? "100", 1
 
 const READ_ONLY_PATHS = new Set([
   "/memorial",
+  "/people",
   "/items",
   "/search",
   "/timeline",
@@ -32,6 +33,7 @@ function getShareToken(c: Context): string | null {
 function isReadOnlyRequest(c: Context): boolean {
   if (c.req.method !== "GET") return false;
   const path = new URL(c.req.url).pathname;
+  if (path.startsWith("/media/")) return true;
   return READ_ONLY_PATHS.has(path) || path === "/";
 }
 

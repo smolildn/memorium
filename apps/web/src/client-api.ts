@@ -3,6 +3,8 @@ import type {
   ImportResult,
   ImportSource,
   Memorial,
+  MemoryItem,
+  Person,
   SearchResult,
   TimelinePeriod,
 } from "./api";
@@ -45,8 +47,53 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+async function patch<T>(path: string, body: unknown): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<T>;
+}
+
 const liveApi = {
   memorial: () => get<Memorial>("/memorial"),
+  people: () => get<Person[]>("/people"),
+  updateMemorial: (body: {
+    name?: string;
+    tribute?: string;
+    bornAt?: string;
+    diedAt?: string;
+  }) => patch<Memorial>("/memorial", body),
+  uploadPortrait: async (file: File): Promise<Memorial> => {
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch(`${API_BASE}/memorial/portrait`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: form,
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json() as Promise<Memorial>;
+  },
+  createPerson: (body: { name: string; relationship?: string }) => post<Person>("/people", body),
+  updatePerson: (id: string, body: Partial<Person>) => patch<Person>(`/people/${id}`, body),
+  updateItem: (id: string, body: Partial<Pick<MemoryItem, "title" | "text" | "personIds" | "metadata">>) =>
+    patch<MemoryItem>(`/items/${id}`, body),
+  uploadPhotos: async (files: File[] | FileList): Promise<{ ok: boolean; count: number }> => {
+    const form = new FormData();
+    for (const file of files) {
+      form.append("file", file);
+    }
+    const res = await fetch(`${API_BASE}/photos/upload`, {
+      method: "POST",
+      headers: authHeaders(),
+      body: form,
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json() as Promise<{ ok: boolean; count: number }>;
+  },
   items: (params?: { limit?: number; source?: string; type?: string }) => {
     const q = new URLSearchParams();
     if (params?.limit) q.set("limit", String(params.limit));
@@ -61,7 +108,7 @@ const liveApi = {
     return get<SearchResult>(`/search?${q.toString()}`);
   },
   timeline: () => get<TimelinePeriod[]>("/timeline"),
-  today: () => get<{ date: string; items: import("./api").MemoryItem[] }>("/today"),
+  today: () => get<{ date: string; items: MemoryItem[] }>("/today"),
   stats: () => get<Record<string, number>>("/stats"),
   chat: (question: string) => post<ChatResponse>("/chat", { question }),
   importSources: () => get<ImportSource[]>("/import/sources"),

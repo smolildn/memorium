@@ -21,6 +21,14 @@ export class Vault {
     this.db.exec("PRAGMA journal_mode = WAL");
     this.db.exec("PRAGMA foreign_keys = ON");
     this.db.exec(SCHEMA_SQL);
+    this.migrate();
+  }
+
+  private migrate(): void {
+    const cols = this.db.prepare("PRAGMA table_info(people)").all() as Array<{ name: string }>;
+    if (!cols.some((c) => c.name === "face_embedding")) {
+      this.db.exec("ALTER TABLE people ADD COLUMN face_embedding TEXT");
+    }
   }
 
   static async create(vaultPath: string, name: string): Promise<{ vault: Vault; memorial: Memorial }> {
@@ -100,6 +108,121 @@ export class Vault {
       .prepare("SELECT * FROM people WHERE is_subject = 1 LIMIT 1")
       .get() as Record<string, string | number> | undefined;
     if (!row) return null;
+    return this.rowToPerson(row);
+  }
+
+  listPeople(): Person[] {
+    const rows = this.db.prepare("SELECT * FROM people ORDER BY is_subject DESC, name").all() as Array<
+      Record<string, string | number>
+    >;
+    return rows.map((row) => this.rowToPerson(row));
+  }
+
+  getPerson(id: string): Person | null {
+    const row = this.db.prepare("SELECT * FROM people WHERE id = ?").get(id) as
+      | Record<string, string | number>
+      | undefined;
+    if (!row) return null;
+    return this.rowToPerson(row);
+  }
+
+  updatePerson(
+    id: string,
+    patch: Partial<Pick<Person, "name" | "relationship" | "avatarPath" | "bornAt" | "diedAt" | "faceEmbedding">>,
+  ): boolean {
+    const current = this.getPerson(id);
+    if (!current) return false;
+
+    const next: Person = {
+      ...current,
+      ...patch,
+    };
+
+    this.db
+      .prepare(
+        `UPDATE people SET name = ?, relationship = ?, avatar_path = ?, born_at = ?, died_at = ?, face_embedding = ?
+         WHERE id = ?`,
+      )
+      .run(
+        next.name,
+        next.relationship ?? null,
+        next.avatarPath ?? null,
+        next.bornAt ?? null,
+        next.diedAt ?? null,
+        next.faceEmbedding ? JSON.stringify(next.faceEmbedding) : null,
+        id,
+      );
+    return true;
+  }
+
+  updateMemorial(
+    patch: Partial<Pick<Memorial, "name" | "description">>,
+  ): Memorial | null {
+    const memorial = this.getMemorial();
+    if (!memorial) return null;
+
+    const next: Memorial = {
+      ...memorial,
+      ...patch,
+      updatedAt: nowIso(),
+    };
+
+    this.db
+      .prepare(`UPDATE memorials SET name = ?, description = ?, updated_at = ? WHERE id = ?`)
+      .run(next.name, next.description ?? null, next.updatedAt, next.id);
+
+    return next;
+  }
+
+  getItem(id: string): MemoryItem | null {
+    const row = this.db.prepare("SELECT * FROM memory_items WHERE id = ?").get(id) as
+      | Record<string, string>
+      | undefined;
+    if (!row) return null;
+    return this.rowToItem(row);
+  }
+
+  updateItem(
+    id: string,
+    patch: Partial<Pick<MemoryItem, "title" | "text" | "personIds" | "metadata">>,
+  ): MemoryItem | null {
+    const current = this.getItem(id);
+    if (!current) return null;
+
+    const next: MemoryItem = {
+      ...current,
+      ...patch,
+      metadata: patch.metadata ? { ...current.metadata, ...patch.metadata } : current.metadata,
+    };
+
+    this.db
+      .prepare(
+        `UPDATE memory_items SET title = ?, text = ?, person_ids = ?, metadata = ? WHERE id = ?`,
+      )
+      .run(
+        next.title ?? null,
+        next.text,
+        JSON.stringify(next.personIds),
+        JSON.stringify(next.metadata),
+        id,
+      );
+
+    return next;
+  }
+
+  private rowToPerson(row: Record<string, string | number>): Person {
+    const faceRaw = row["face_embedding"] as string | undefined;
+    let faceEmbedding: number[] | undefined;
+    if (faceRaw) {
+      try {
+        const parsed = JSON.parse(faceRaw) as unknown;
+        if (Array.isArray(parsed) && parsed.length === 128) {
+          faceEmbedding = parsed as number[];
+        }
+      } catch {
+        /* ignore corrupt embedding */
+      }
+    }
     return {
       id: row["id"] as string,
       name: row["name"] as string,
@@ -108,6 +231,25 @@ export class Vault {
       avatarPath: (row["avatar_path"] as string) ?? undefined,
       bornAt: (row["born_at"] as string) ?? undefined,
       diedAt: (row["died_at"] as string) ?? undefined,
+      faceEmbedding,
+    };
+  }
+
+  private rowToItem(row: Record<string, string>): MemoryItem {
+    return {
+      id: row["id"]!,
+      memorialId: row["memorial_id"]!,
+      type: row["type"] as MemoryItem["type"],
+      source: row["source"] as MemoryItem["source"],
+      sourceId: row["source_id"] ?? undefined,
+      title: row["title"] ?? undefined,
+      text: row["text"] ?? "",
+      occurredAt: row["occurred_at"]!,
+      importedAt: row["imported_at"]!,
+      personIds: JSON.parse(row["person_ids"] ?? "[]") as string[],
+      mediaRefs: JSON.parse(row["media_refs"] ?? "[]") as MemoryItem["mediaRefs"],
+      metadata: JSON.parse(row["metadata"] ?? "{}") as Record<string, unknown>,
+      contentHash: row["content_hash"]!,
     };
   }
 
@@ -142,8 +284,8 @@ export class Vault {
   insertPerson(person: Person): void {
     this.db
       .prepare(
-        `INSERT INTO people (id, name, relationship, is_subject, avatar_path, born_at, died_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO people (id, name, relationship, is_subject, avatar_path, born_at, died_at, face_embedding)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         person.id,
@@ -153,6 +295,7 @@ export class Vault {
         person.avatarPath ?? null,
         person.bornAt ?? null,
         person.diedAt ?? null,
+        person.faceEmbedding ? JSON.stringify(person.faceEmbedding) : null,
       );
   }
 
@@ -203,3 +346,4 @@ export class Vault {
 }
 
 export { SCHEMA_SQL } from "./schema.js";
+export { sanitizeFilename, storeVaultMedia, resolveVaultMediaPath } from "./media.js";

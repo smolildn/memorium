@@ -190,65 +190,127 @@ The web UI can be deployed as a **static demo** (browse sample data + export gui
 
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full deployment details.
 
-## Roadmap
+## Profile & Photos
 
-Memorium separates **three profile concepts** so the UI stays clear:
+Memorium separates **three profile concepts**:
 
-| Concept | Purpose | Status |
-|---------|---------|--------|
-| **Memorial subject** | The person being remembered (name, dates, tribute, portrait) | Hero header today; full profile page planned |
-| **People in the archive** | Family and friends who appear in photos and messages | Schema ready (`people`, `personIds`); CRUD + tagging planned |
-| **Vault operator** | You, managing imports and settings | Local-first; no cloud account required |
+| Concept | Where | What you can do |
+|---------|--------|-----------------|
+| **Memorial subject** | Profile tab + hero | Edit name, dates, tribute, portrait |
+| **People in the archive** | Profile tab | Add family/friends; learn faces from portraits |
+| **Vault operator** | Local install | Import, upload, tag — no cloud account |
 
-### Phased delivery
+### Photos tab
+
+- **Photo bump** — drag-and-drop or file picker for quick uploads
+- **Bulk upload** — select many files at once; EXIF date/GPS/camera extracted automatically
+- **Gallery filters** — year, tag, person
+- **Detail panel** — tags, people checkboxes, CSS filter previews, face boxes
+- **Scan archive for faces** — batch-detect and suggest names across unscanned photos
+
+Photos are copied into `media/photos/` in your vault and served locally via the API.
+
+### Profile tab
+
+- Edit memorial subject (name, tribute, lifespan)
+- Upload portrait
+- Register people (Maria, James, …) with relationships
+- **Learn face from photo** — stores a 128-d reference embedding on the person record for recognition
+
+---
+
+## Facial recognition
+
+Face matching runs **entirely in your browser** using [@vladmandic/face-api](https://github.com/vladmandic/face-api). No photo data is sent to OpenAI, Ollama, or any cloud API unless you separately enable cloud vision (not implemented by default).
+
+### How it works
 
 ```
-Upload / photo bump ──► Ingest + EXIF ──► Photos tab + filters ──► Tags + people ──► Face assist (opt-in)
+Portrait / labeled faces ──► 128-d embeddings ──► Local gallery
+                                                        │
+New photo ──► SSD detect ──► landmarks ──► descriptor ──┼──► Match (euclidean ≤ 0.6)
+                                                        │
+                                              Human confirms ──► Saved to vault
 ```
 
-#### Phase 1 — Profile + photos foundation
+1. **Detection** — SSD MobileNet finds face bounding boxes in the photo.
+2. **Descriptor** — a 128-number embedding captures facial identity (not stored off-device).
+3. **Gallery** — built from:
+   - People with **Learn face from photo** on their portrait
+   - Faces you manually labeled and saved in other photos
+4. **Suggestion** — new faces are compared to the gallery; matches pre-fill the person dropdown.
+5. **Confirmation** — labels are never auto-published; you review and click **Save changes**.
 
-- Memorial profile page (edit name, dates, tribute, portrait)
-- People registry (add relatives, relationships, avatars)
-- **Photos** tab — grid, lightbox, filter by date / source / tag
-- Web **photo bump** (single upload + caption) and bulk photo upload
-- EXIF extraction on ingest (date, GPS, camera)
-- Normalize media into the vault and serve via the API
+Embeddings are stored in the vault as:
 
-**Deploy:** standard local stack (`npm run poc`). No AI required.
+- `people.face_embedding` — reference portrait for each person
+- `memory_items.metadata.faces[].embedding` — per-face descriptors on photos
 
-#### Phase 2 — Tagging and person links
+### Setup (one-time)
 
-- Manual person tags on any memory (“who is in this photo?”)
-- Tag taxonomy (events, places, themes)
-- Filter timeline and gallery by person or tag
-- Wire `personIds` into search (schema already supports this)
+Models (~10 MB) are copied into the web app on `npm install`:
 
-**Deploy:** local stack only. Optional AI for tag *suggestions* via the wrapper (see below).
+```bash
+npm install
+node scripts/setup-face-models.mjs   # runs automatically via postinstall
+```
 
-#### Phase 3 — Face assist (opt-in)
+Models live at `apps/web/public/face-models/` and load from your own origin — works offline after the first load.
 
-- Face **detection** in the browser (bounding boxes, no identity yet)
-- Manual assignment to a person in the registry
-- Optional **local** recognition suggestions after enough labeled examples
-- Consent UI: face matching runs on-device; nothing leaves the machine unless cloud AI is enabled
+**Browser support:** Chrome or Edge recommended (WebGL + WASM). Falls back to the native `FaceDetector` API if face-api models fail to load (detection only, no cross-photo matching).
 
-**Deploy:** browser-local ML (e.g. face-api.js / MediaPipe) by default. Cloud vision APIs only with explicit opt-in.
+### Using recognition
 
-#### Phase 4 — Polish
+**Teach the system who someone is**
 
-- Per-person photo grids (“all photos with Maria”)
-- Bulk re-tag and merge duplicate people
-- Person-specific album export (HTML / print)
+1. Profile → upload a clear front-facing portrait for Rose (or any person)
+2. Click **Learn face from photo** — stores their reference embedding
+3. Optionally label a few photos manually and save — each labeled face adds to the gallery
 
-**Deploy:** same as Phase 1–2; export uses existing `memorium export --html`.
+**Detect on one photo**
 
-### Design constraints (memorial context)
+1. Photos → open a photo → **Detect faces**
+2. Review suggested names and match scores
+3. Adjust if needed → **Save changes**
 
-- **Never auto-publish face labels** — human confirmation required
-- **Living vs deceased** — optional restrictions when sharing read-only links
-- **Share tokens** — read-only; no unconfirmed face suggestions exposed
-- **Profile tone** — tribute archive, not a social network
+**Scan the whole archive**
+
+1. Photos → **Scan archive for faces**
+2. Unscanned photos are processed locally; suggestions are written to the vault
+3. Open individual photos to confirm or correct
+
+### Match threshold
+
+Default maximum euclidean distance: **0.6** (`FACE_MATCH_THRESHOLD` in `apps/web/src/utils/faceRecognition.ts`). Lower = stricter matching. The UI shows `(match 0.XX)` as `1 - distance` for readability.
+
+### Privacy & memorial context
+
+- All inference is **on-device** — appropriate for sensitive family archives
+- **Never auto-publish** face labels to shared links without human review
+- Share tokens expose read-only data; face suggestions require the local write API
+- Living family members: confirm labels before sharing externally
+
+### Facial recognition — improvements roadmap
+
+| Improvement | Status | Notes |
+|-------------|--------|-------|
+| Browser face detection (FaceDetector API) | ✅ Shipped | Fallback when ML models unavailable |
+| Embedding-based matching (face-api) | ✅ Shipped | 128-d descriptors + gallery |
+| Portrait reference learning | ✅ Shipped | Profile → Learn face from photo |
+| Batch archive scan | ✅ Shipped | Photos → Scan archive for faces |
+| Persist embeddings in vault | ✅ Shipped | `face_embedding` + `metadata.faces` |
+| Manual face regions | ✅ Shipped | Add region when detection misses |
+| Cross-photo person filter | ✅ Shipped | Photos tab + face/personIds |
+| **Higher-accuracy models** | 🔲 Planned | TinyFace / RetinaFace for old/scanned prints |
+| **GPU batch indexing** | 🔲 Planned | WebWorker pipeline for large archives (10k+ photos) |
+| **Merge duplicate people** | 🔲 Planned | Combine Maria + Maria G. with face cluster hints |
+| **Age-aware matching** | 🔲 Planned | Weight matches by decade (child vs adult photos) |
+| **Living-person consent flags** | 🔲 Planned | Hide face boxes on shared links until approved |
+| **Cloud vision opt-in** | 🔲 Planned | Optional OpenAI/Google vision behind same UI, explicit toggle |
+| **CLI face index** | 🔲 Planned | `memorium index-faces` for headless vaults on a home server |
+| **Per-person album export** | 🔲 Planned | `memorium export --person Maria --html` |
+
+Face recognition is intentionally **separate from the chat/embed AI wrapper** (`@memorium/ai`) so photos never leave the device unless you explicitly opt into cloud vision in a future release.
 
 ---
 
@@ -339,15 +401,10 @@ Pages serves static demo JSON. Import, photo bump, indexing, and Ask require the
 
 | Phase | AI wrapper role |
 |-------|-----------------|
-| Phase 1 (photos) | Not required; EXIF and media are ingest/storage |
-| Phase 2 (tags) | Optional: suggest tags or people names from caption text via `MemorialChat`-style prompts |
-| Phase 3 (faces) | **Default: browser-local** detection/recognition — not the OpenAI/Ollama wrapper |
-| Phase 3 (opt-in cloud) | Optional vision API behind the same provider interface for higher-accuracy suggestions |
-| Phase 4 (export) | Optional: AI-generated chapter intros in HTML export |
-
-Face recognition is intentionally **separate** from the chat/embed wrapper so photos never leave the device unless you explicitly opt into cloud vision.
-
-### Environment reference (AI)
+| Photos & tags | Not required; EXIF and media are ingest/storage |
+| Tag suggestions | Optional: suggest tags from caption text via `MemorialChat` |
+| Face recognition | **Separate** — browser-local face-api, not OpenAI/Ollama |
+| Export | Optional: AI chapter intros in HTML export (planned) |
 
 | Variable | Ollama example | OpenAI example |
 |----------|----------------|----------------|
@@ -390,7 +447,7 @@ memorium/
 | Android SMS | ✅ | SMS Backup & Restore `.xml` |
 | Google Messages | ✅ | Takeout JSON |
 | iPhone iMessage | ✅ | `chat.db` or CSV export |
-| Raw photos/videos | ✅ Framework | Folder ingest; EXIF + vault media copy on roadmap |
+| Raw photos/videos | ✅ | Web upload + EXIF; vault media copy |
 | Google Photos | 🔲 Planned | Takeout JSON + media |
 
 ## Privacy principles

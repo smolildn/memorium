@@ -4,6 +4,7 @@ import type {
   ImportSource,
   Memorial,
   MemoryItem,
+  Person,
   SearchResult,
   TimelinePeriod,
 } from "./api";
@@ -73,8 +74,57 @@ function searchItems(items: MemoryItem[], q: string): SearchResult {
   return { items: matched, total: matched.length };
 }
 
+const DEMO_PEOPLE: Person[] = [
+  {
+    id: "demo-subject",
+    name: "Rose Martinez",
+    isSubject: true,
+    relationship: "Mother & grandmother",
+    bornAt: "1942-03-15T00:00:00.000Z",
+    diedAt: "2021-11-08T00:00:00.000Z",
+    avatarPath: "demo/media/portrait.svg",
+  },
+  { id: "demo-maria", name: "Maria", relationship: "Niece" },
+  { id: "demo-james", name: "James", relationship: "Son" },
+];
+
 export const demoApi = {
   memorial: async () => (await loadDemo()).memorial,
+
+  people: async () => DEMO_PEOPLE,
+
+  updateMemorial: async (): Promise<Memorial> => {
+    throw new Error("Profile editing requires the local app. Clone the repo and run: npm run poc");
+  },
+
+  uploadPortrait: async (): Promise<Memorial> => {
+    throw new Error("Portrait upload requires the local app.");
+  },
+
+  createPerson: async (): Promise<Person> => {
+    throw new Error("Adding people requires the local app.");
+  },
+
+  updatePerson: async (id: string, body: Partial<Person>): Promise<Person> => {
+    const person = DEMO_PEOPLE.find((p) => p.id === id);
+    if (!person) throw new Error("Person not found");
+    return { ...person, ...body };
+  },
+
+  updateItem: async (id: string, body: Partial<MemoryItem>): Promise<MemoryItem> => {
+    const { items } = await loadDemo();
+    const item = items.find((i) => i.id === id);
+    if (!item) throw new Error("Item not found");
+    return {
+      ...item,
+      ...body,
+      metadata: body.metadata ? { ...item.metadata, ...body.metadata } : item.metadata,
+    };
+  },
+
+  uploadPhotos: async (): Promise<{ ok: boolean; count: number }> => {
+    throw new Error("Photo upload requires the local app.");
+  },
 
   items: async (params?: { limit?: number; source?: string; type?: string; offset?: number }) => {
     const { items } = await loadDemo();

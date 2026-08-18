@@ -37,7 +37,7 @@ export function createDemoItems(memorialId: string): MemoryItem[] {
       occurredAt: "2019-05-04T14:22:00.000Z",
       personIds: [],
       mediaRefs: [demoImage("instagram-garden.svg")],
-      metadata: { likes: 89, lat: 41.8781, lng: -87.6298, place: "Rose's garden, Chicago" },
+      metadata: { likes: 89, lat: 41.8781, lng: -87.6298, place: "Rose's garden, Chicago", tags: ["garden", "roses", "spring"] },
     },
     {
       type: "message",

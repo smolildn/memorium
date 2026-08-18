@@ -38,6 +38,8 @@ export const PersonSchema = z.object({
   avatarPath: z.string().optional(),
   bornAt: z.string().datetime().optional(),
   diedAt: z.string().datetime().optional(),
+  /** 128-d face descriptor for recognition (browser-computed, stored locally) */
+  faceEmbedding: z.array(z.number()).length(128).optional(),
 });
 export type Person = z.infer<typeof PersonSchema>;
 

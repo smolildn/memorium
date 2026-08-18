@@ -9,5 +9,9 @@ export function mediaUrl(ref: MediaRef): string {
     return path;
   }
   const normalized = path.replace(/^\//, "");
+  if (normalized.startsWith("media/")) {
+    const apiBase = import.meta.env.VITE_API_BASE ?? "/api";
+    return `${apiBase}/media/${normalized.slice("media/".length)}`;
+  }
   return `${import.meta.env.BASE_URL}${normalized}`;
 }

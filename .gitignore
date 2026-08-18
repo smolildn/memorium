@@ -9,6 +9,7 @@ dist/
 data/
 uploads/
 apps/web/public/demo/*.json
+apps/web/public/face-models/
 apps/web/src/generated/
 .DS_Store
 Thumbs.db

@@ -9,6 +9,17 @@ export interface Memorial {
   portraitPath?: string;
 }
 
+export interface Person {
+  id: string;
+  name: string;
+  relationship?: string;
+  isSubject?: boolean;
+  avatarPath?: string;
+  bornAt?: string;
+  diedAt?: string;
+  faceEmbedding?: number[];
+}
+
 export interface MemoryItem {
   id: string;
   memorialId?: string;

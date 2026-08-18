@@ -9,3 +9,4 @@ export { IMessageAdapter } from "./adapters/imessage.js";
 export { getAdapters, detectAdapter, getAdapterById } from "./registry.js";
 export { IMPORT_SOURCES, getImportSource, formatExportGuide, type ImportSourceGuide } from "./import-sources.js";
 export { runIngest, saveUpload, type IngestSummary } from "./run.js";
+export { ingestPhotoUpload, type PhotoUploadResult } from "./photo-upload.js";
