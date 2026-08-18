@@ -1,0 +1,190 @@
+[
+  {
+    "id": "auto",
+    "label": "Auto-detect",
+    "description": "Let Memorium detect the file format automatically",
+    "extensions": [
+      ".zip",
+      ".xml",
+      ".json",
+      ".txt",
+      ".mbox",
+      ".eml",
+      ".csv",
+      ".db"
+    ],
+    "exportSteps": [
+      "Export your data using any guide below",
+      "Upload the file here — Memorium will pick the right parser"
+    ]
+  },
+  {
+    "id": "meta",
+    "label": "Facebook / Instagram / Messenger",
+    "description": "Meta “Download Your Information” export (ZIP or extracted folder)",
+    "extensions": [
+      ".zip"
+    ],
+    "exportUrl": "https://www.facebook.com/dyi",
+    "exportSteps": [
+      "Log into Facebook or Instagram (must have account access)",
+      "Go to Settings → Your activity → Download your information",
+      "Or visit facebook.com/dyi directly",
+      "Select the profile (Facebook, Instagram, or both)",
+      "Choose JSON format (not HTML)",
+      "Select date range: All time",
+      "Include: Posts, Messages, Photos and videos, and any other categories you want",
+      "Create export and wait for Meta’s email (can take up to 48 hours)",
+      "Download the ZIP and upload it here"
+    ],
+    "tips": [
+      "Do this before an account is memorialized or deleted — Instagram has no post-death export",
+      "Facebook legacy contacts can download some data after memorialization, but not messages",
+      "Messenger threads are included in the same Meta export bundle"
+    ]
+  },
+  {
+    "id": "whatsapp",
+    "label": "WhatsApp",
+    "description": "WhatsApp chat export as a .txt file",
+    "extensions": [
+      ".txt"
+    ],
+    "exportUrl": "https://faq.whatsapp.com/general/chats/how-to-export-your-chat-history",
+    "exportSteps": [
+      "Open WhatsApp on your phone",
+      "Open the chat you want to save",
+      "Tap the contact or group name at the top",
+      "Scroll down and tap Export chat",
+      "Choose Without media (smaller file) or Include media",
+      "Save or share the .txt file to your computer",
+      "Upload the .txt file here (one chat per file)"
+    ],
+    "tips": [
+      "Repeat for each conversation you want in the archive",
+      "Media files are not imported in this POC — text messages only",
+      "Export while you still have phone access to the account"
+    ]
+  },
+  {
+    "id": "android_sms",
+    "label": "Android SMS / SMS Backup & Restore",
+    "description": "XML backup from the SMS Backup & Restore app (Android)",
+    "extensions": [
+      ".xml"
+    ],
+    "exportUrl": "https://www.synctech.com.au/sms-backup-restore/",
+    "exportSteps": [
+      "Install SMS Backup & Restore from the Google Play Store on the Android phone",
+      "Open the app and tap Backup",
+      "Choose SMS (and optionally MMS)",
+      "Select a local folder or cloud destination for the backup file",
+      "Wait for the backup to complete — file will be named sms-*.xml",
+      "Transfer the .xml file to your computer (USB, email, Google Drive, etc.)",
+      "Upload the .xml file here"
+    ],
+    "tips": [
+      "Works with most Android phones and carriers",
+      "For Google Messages specifically, you can also use Google Takeout (see Google Messages guide)",
+      "Back up before resetting or replacing the phone"
+    ]
+  },
+  {
+    "id": "google_messages",
+    "label": "Google Messages",
+    "description": "Google Takeout export or Messages JSON backup",
+    "extensions": [
+      ".json",
+      ".zip"
+    ],
+    "exportUrl": "https://takeout.google.com/",
+    "exportSteps": [
+      "Sign in at takeout.google.com with the Google account linked to Messages",
+      "Click Deselect all, then check only Messages (and any related items)",
+      "Choose export format: ZIP, split if large",
+      "Choose delivery method (download link or Drive)",
+      "Create export and wait for Google’s email",
+      "Download and unzip — look for JSON files inside the Messages folder",
+      "Upload the .json file or entire Takeout ZIP here"
+    ],
+    "tips": [
+      "RCS / Google Messages sync requires the account to be active at export time",
+      "If you use Messages on Android without Google backup, use SMS Backup & Restore instead",
+      "Takeout exports can be large — allow time for download"
+    ]
+  },
+  {
+    "id": "imessage",
+    "label": "iPhone iMessage",
+    "description": "chat.db from an iPhone backup, or CSV from export tools",
+    "extensions": [
+      ".db",
+      ".csv"
+    ],
+    "exportSteps": [
+      "Option A — chat.db (full archive):",
+      "  1. Create an encrypted iPhone backup on Mac (Finder) or Windows (iTunes)",
+      "  2. Use iMazing, iBackup Viewer, or iPhone Backup Extractor to locate chat.db",
+      "  3. chat.db path: Backup → HomeDomain → Library → SMS → chat.db",
+      "  4. Copy chat.db to your computer and upload it here",
+      "Option B — CSV (simpler):",
+      "  1. Open iMazing or iBackup Viewer",
+      "  2. Select Messages → choose a conversation or export all",
+      "  3. Export as CSV with columns: Date, Sender, Text",
+      "  4. Upload the .csv file here"
+    ],
+    "tips": [
+      "Apple does not offer a built-in iMessage export — you must use a backup or third-party tool",
+      "Export while you have the phone or an existing backup — memorialized accounts cannot be accessed",
+      "chat.db requires an unencrypted backup on Mac, or tools that can read encrypted backups"
+    ]
+  },
+  {
+    "id": "email",
+    "label": "Email (Gmail, Outlook, Apple Mail)",
+    "description": "Gmail Takeout .mbox archive or individual .eml files",
+    "extensions": [
+      ".mbox",
+      ".eml"
+    ],
+    "exportUrl": "https://takeout.google.com/",
+    "exportSteps": [
+      "Gmail: go to takeout.google.com → select Mail → export as .mbox",
+      "Outlook: File → Open & Export → Import/Export → export to .pst, then convert to .eml/.mbox with a converter, or save individual messages as .eml",
+      "Apple Mail: select messages → File → Save As → Raw Message Source (.eml)",
+      "Thunderbird: install ImportExportTools NG addon → export folder as .eml or mbox",
+      "Upload the .mbox file, a folder of .eml files (zip first), or individual .eml files here"
+    ],
+    "tips": [
+      "For a loved one’s account, export while you still have login access or legacy access",
+      "Gmail .mbox from Takeout is the most reliable format for bulk import",
+      "Zip a folder of .eml files before uploading via the web UI"
+    ]
+  },
+  {
+    "id": "image",
+    "label": "Photos & Videos",
+    "description": "Folder of photos and videos from any source",
+    "extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".gif",
+      ".webp",
+      ".heic",
+      ".mp4",
+      ".mov"
+    ],
+    "exportSteps": [
+      "Collect photos and videos into a single folder on your computer",
+      "Sources: camera roll export, Google Photos Takeout, iCloud download, USB copy from phone",
+      "Google Photos: takeout.google.com → select Google Photos → download and unzip",
+      "iCloud: icloud.com/photos → select → download, or use the iCloud for Windows/Mac app",
+      "Zip the folder if uploading via web UI, or use CLI: npm run cli -- import ./path/to/photos"
+    ],
+    "tips": [
+      "Memorium uses file dates for timeline ordering — EXIF extraction coming in a future update",
+      "For Google Photos Takeout, import the media folder after unzipping"
+    ]
+  }
+]

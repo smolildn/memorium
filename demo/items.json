@@ -1,0 +1,471 @@
+{
+  "items": [
+    {
+      "type": "post",
+      "source": "meta_facebook",
+      "title": "Sunday dinner tradition",
+      "text": "Nothing beats Rose's arroz con pollo. Every Sunday the whole block could smell it cooking. She always made enough for whoever showed up — and someone always showed up.",
+      "occurredAt": "2018-03-11T18:30:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "reactions": 47,
+        "comments": 12
+      },
+      "id": "05d4427d-6347-4d7d-9bc4-aec77e5fe64a",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "dc7a01d289a6d4c8b133cd29c4d75172104602cf46b7916a8e5066d41743fc30"
+    },
+    {
+      "type": "post",
+      "source": "meta_instagram",
+      "title": "Garden in bloom",
+      "text": "Her roses are finally opening 🌹 Third year in a row she's won the neighborhood garden club ribbon. #roses #garden #spring",
+      "occurredAt": "2019-05-04T14:22:00.000Z",
+      "personIds": [],
+      "mediaRefs": [
+        {
+          "vaultPath": "demo/media/instagram-garden.svg",
+          "mimeType": "image/svg+xml",
+          "originalFilename": "instagram-garden.svg",
+          "width": 1080,
+          "height": 1080,
+          "id": "6f772141-dbf1-4feb-b0fb-e3ef455b511e"
+        }
+      ],
+      "metadata": {
+        "likes": 89,
+        "lat": 41.8781,
+        "lng": -87.6298,
+        "place": "Rose's garden, Chicago",
+        "tags": [
+          "garden",
+          "roses",
+          "spring"
+        ]
+      },
+      "id": "3cba5c97-a54e-4633-b1e2-9cb360b58a79",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "contentHash": "3d8e9542b843e389a1c04a07a3300c17029931b3e3acda646e99d16ecf056706"
+    },
+    {
+      "type": "message",
+      "source": "meta_messenger",
+      "title": "Message from Maria",
+      "text": "Tía Rose — can you send me the recipe for the flan? The one you made for abuela's birthday. I want to make it for Sofia's quinceañera.",
+      "occurredAt": "2020-02-14T21:05:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Maria"
+      },
+      "id": "20ed8b29-99a8-414c-8c2f-1c90aac63cc4",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "572ecb8f0b0f47b34d1faf67f792c4206a8d995401a7fec3faada668e8594339"
+    },
+    {
+      "type": "message",
+      "source": "meta_messenger",
+      "title": "Message from Rose",
+      "text": "Of course mija! I'll write it out by hand and mail it to you. Some things shouldn't live only on a phone. Love you 💕",
+      "occurredAt": "2020-02-14T21:18:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Rose Martinez"
+      },
+      "id": "12d84acd-2816-4b5e-9b75-d9bf150cbd4b",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "0337d5c796173b35e82499943ad928f3f56ee80029e3671e3b8067482202f0ae"
+    },
+    {
+      "type": "email",
+      "source": "email",
+      "title": "Re: College move-in day",
+      "text": "Dear James,\n\nI packed the quilt your grandfather made — the blue one. Take care of it. Call me when you get there, even if it's late. I'll be awake.\n\nLove always,\nMom",
+      "occurredAt": "2017-08-22T09:15:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "from": "rose.martinez@gmail.com",
+        "to": "james.martinez@university.edu"
+      },
+      "id": "764464b6-389b-4dce-85fd-42264a15ea32",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "d562ecfe0a7d59b67544935dd0bede49d4c360a9ab14673629beb49bbcb9cbb3"
+    },
+    {
+      "type": "email",
+      "source": "email",
+      "title": "Photos from the reunion",
+      "text": "Hi everyone,\n\nAttached are the photos from last weekend. What a wonderful time seeing all of you. Let's not wait another five years!\n\nRose",
+      "occurredAt": "2015-07-03T16:40:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "from": "rose.martinez@gmail.com",
+        "to": "family@martinez-clan.com"
+      },
+      "id": "5c050501-98b0-437c-85c9-1cf691d0cf76",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "ba3316595569601a37273ae173abeedf76b1d98c08ee06c5ee7a74c4ced74a38"
+    },
+    {
+      "type": "message",
+      "source": "whatsapp",
+      "title": "WhatsApp from James",
+      "text": "Mom, landed safe. Room is small but the quilt is on the bed already. Miss you.",
+      "occurredAt": "2017-08-22T22:30:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "James",
+        "chat": "Family Group"
+      },
+      "id": "29c03b57-4bdc-4efc-a6aa-5f6ec7819099",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "ad28bbc0db5115267ed727b3d4d602380053d2fe707dc54ea098eb6a5b56b4ce"
+    },
+    {
+      "type": "message",
+      "source": "whatsapp",
+      "title": "WhatsApp from Rose",
+      "text": "So proud of you. Eat something besides ramen. I left money in the envelope — don't argue with me.",
+      "occurredAt": "2017-08-22T22:45:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Rose Martinez",
+        "chat": "Family Group"
+      },
+      "id": "3b3afc15-c85b-4b13-8fa0-e6d454dab3f8",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "dbf1fe22198f478ab23e952e94316de49531835c43e844800ce30b28ac583fa3"
+    },
+    {
+      "type": "message",
+      "source": "imessage",
+      "title": "iMessage from James",
+      "text": "Mom are you awake? Flight got cancelled. Stuck at O'Hare.",
+      "occurredAt": "2019-11-27T03:14:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "James",
+        "service": "iMessage"
+      },
+      "id": "2e1f4077-febe-4bac-8ae5-81d20fa01c5b",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "f567fddb98b3389f79e5757b4dfa18b67367792f92de2037c780b054bd21a0e8"
+    },
+    {
+      "type": "message",
+      "source": "imessage",
+      "title": "iMessage from Rose",
+      "text": "Always awake for you mijo. There's a quilt in the hall closet if they give you blankets. Come home whenever — turkey keeps.",
+      "occurredAt": "2019-11-27T03:22:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Rose Martinez",
+        "service": "iMessage"
+      },
+      "id": "e6648932-a174-45d3-87fb-ee2e4ad70354",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "e8b972a0698f80758a5f28c950aae545533b03a922682e355ffc0627b593c97f"
+    },
+    {
+      "type": "message",
+      "source": "google_messages",
+      "title": "Text from Maria",
+      "text": "Tía the roses in your last post look incredible!! 😍 Can I come by Saturday for a cutting?",
+      "occurredAt": "2019-05-06T19:45:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Maria",
+        "service": "Google Messages"
+      },
+      "id": "9427aa96-1333-48f1-b037-a748ad12a95c",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "d3c81fb29aeb0759033eb4e016df17e154e11a84aecce50c56e83abd17444d9e"
+    },
+    {
+      "type": "message",
+      "source": "google_messages",
+      "title": "Text from Rose",
+      "text": "Of course! I'll put coffee on. Bring Sofia — I have cookies from yesterday.",
+      "occurredAt": "2019-05-06T19:52:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Rose Martinez",
+        "service": "Google Messages"
+      },
+      "id": "4debd9e5-77fd-4d19-8af8-d66e6ca8c08a",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "31a2a2096ad1296926eef2dcc6c913d348c87ac678ae3c2ba510af7a2a9e93d9"
+    },
+    {
+      "type": "post",
+      "source": "meta_facebook",
+      "title": "Happy birthday Sofia!",
+      "text": "15 years ago I became a great-aunt and the world got a little brighter. Feliz quinceañera princesa! The flan recipe lives on. 🎂",
+      "occurredAt": "2021-06-12T19:00:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "reactions": 112
+      },
+      "id": "383274fc-fff7-4e00-9017-107eee07a774",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "72dda1a3e38e476cde729ca8f62a5799362c8473a22a1a1cb3c8bef8f6286c7e"
+    },
+    {
+      "type": "post",
+      "source": "meta_instagram",
+      "title": "Sofia's quinceañera",
+      "text": "My beautiful great-niece in her dress. Fifteen years of joy. #quinceañera #family #blessed",
+      "occurredAt": "2021-06-12T21:30:00.000Z",
+      "personIds": [],
+      "mediaRefs": [
+        {
+          "vaultPath": "demo/media/instagram-quinceanera.svg",
+          "mimeType": "image/svg+xml",
+          "originalFilename": "instagram-quinceanera.svg",
+          "width": 1080,
+          "height": 1080,
+          "id": "234f27a7-f25a-4a38-a5dd-4ad2427fb3ea"
+        }
+      ],
+      "metadata": {
+        "likes": 203
+      },
+      "id": "a3639438-8960-4bf2-97a2-85014a8b65e5",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "contentHash": "1abe9ea00e009a4720643a7f8827f19ce267204a08036e6950b35178abb26c06"
+    },
+    {
+      "type": "note",
+      "source": "manual",
+      "title": "Voice note transcript",
+      "text": "Recorded at the kitchen table, March 2022: 'Tell them about the time your father and I drove to Niagara Falls with no map. We got lost three times and it was the best trip we ever took. Getting lost together is underrated.'",
+      "occurredAt": "2022-03-08T15:00:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "recordedBy": "Maria"
+      },
+      "id": "96e9a692-8df0-4b3a-80ca-1df7f2a1d227",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "5b83213afb31a03f4402f5f6580a6db91f5f1568a303aaf65e0942bb38c0dafe"
+    },
+    {
+      "type": "photo",
+      "source": "manual",
+      "title": "Wedding day, 1978",
+      "text": "Scanned from the album in the hall closet. Rose and Antonio outside St. Mary's. She said yes before he finished the question.",
+      "occurredAt": "1978-09-16T16:00:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "scannedBy": "James",
+        "originalFormat": "polaroid"
+      },
+      "id": "2a2ee00f-e631-4c79-abee-b14b2ae8bf8d",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "d278ba8c312ab4f6a8656d8b1388966346b22d5dc9e7622f6d373d739fbed94a"
+    },
+    {
+      "type": "message",
+      "source": "sms",
+      "title": "Text from Rose",
+      "text": "Don't forget your coat. It's colder than the forecast says. Love you.",
+      "occurredAt": "2019-12-01T07:12:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Rose Martinez",
+        "address": "+15551234567"
+      },
+      "id": "c363a19c-52df-48c5-b6ee-b6b6ed00abe7",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "2c7eda38452e08a4dc4f177447f9a212cddc82d9c414202d342cbd95ff3335e9"
+    },
+    {
+      "type": "message",
+      "source": "sms",
+      "title": "Text from James",
+      "text": "Can you pick up my prescription when you're out? CVS on Main St.",
+      "occurredAt": "2020-03-15T11:08:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "James",
+        "address": "+15551234567"
+      },
+      "id": "2a55231d-13ec-4af2-85a8-694c21ef96e7",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "bdf9b1d01c87c55db67c1b4b002366f05a40301800e91232ab40a3df25e3cc40"
+    },
+    {
+      "type": "message",
+      "source": "sms",
+      "title": "Text from Rose",
+      "text": "Already done. It's in the blue bag by the door. Take the lasagna out of the freezer too.",
+      "occurredAt": "2020-03-15T11:19:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Rose Martinez",
+        "address": "+15551234567"
+      },
+      "id": "78c71e44-e567-42a5-ae99-b1c65cf9e604",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "c038f0d7052dce7ca742a4f49a75d40faee5877a0e28ec28114a9a3fcee5ae9f"
+    },
+    {
+      "type": "message",
+      "source": "imessage",
+      "title": "iMessage from Sofia",
+      "text": "ABUELA ROSE!!! I got the dress!!! It's perfect 😭💕",
+      "occurredAt": "2021-05-28T16:02:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Sofia",
+        "service": "iMessage"
+      },
+      "id": "e2bc09a2-34eb-4136-8ec2-cda15f83db67",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "f0493dbde2a5d54ab9e8db9df57aa9e751a7e26558062e38f968fa6a39855aa8"
+    },
+    {
+      "type": "message",
+      "source": "imessage",
+      "title": "iMessage from Rose",
+      "text": "Send me a picture RIGHT NOW princesa. I'm crying at the kitchen table.",
+      "occurredAt": "2021-05-28T16:05:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "sender": "Rose Martinez",
+        "service": "iMessage"
+      },
+      "id": "6e665544-2641-4c4f-ba38-11195cc5e9e6",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "32dcdcb19079ef2d3f71002635e11b13071de033647a18591d41fa04d14e5e65"
+    },
+    {
+      "type": "post",
+      "source": "meta_instagram",
+      "title": "Christmas cookies",
+      "text": "Annual cookie marathon with the grandkids. Flour everywhere. Wouldn't have it any other way. 🍪",
+      "occurredAt": "2019-12-22T11:30:00.000Z",
+      "personIds": [],
+      "mediaRefs": [
+        {
+          "vaultPath": "demo/media/instagram-cookies.svg",
+          "mimeType": "image/svg+xml",
+          "originalFilename": "instagram-cookies.svg",
+          "width": 1080,
+          "height": 1080,
+          "id": "27bab4a6-dfca-4f19-ae57-e0afeb6c2994"
+        }
+      ],
+      "metadata": {
+        "likes": 134
+      },
+      "id": "462fcf6b-e373-4c3c-9b4a-38edd2a09406",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "contentHash": "7606d17cfb396d4267f1c5179bdfe61d2eafb2f72ed7386b200fec858adc4035"
+    },
+    {
+      "type": "post",
+      "source": "meta_instagram",
+      "title": "Sunday market flowers",
+      "text": "Stopped at the farmers market on the way home. These go in Maria's bouquet tomorrow. #flowers #local #sunday",
+      "occurredAt": "2020-04-19T10:15:00.000Z",
+      "personIds": [],
+      "mediaRefs": [
+        {
+          "vaultPath": "demo/media/instagram-market.svg",
+          "mimeType": "image/svg+xml",
+          "originalFilename": "instagram-market.svg",
+          "width": 1080,
+          "height": 1080,
+          "id": "a4eee79c-2902-4bb1-a9b1-28163eb45d78"
+        }
+      ],
+      "metadata": {
+        "likes": 76,
+        "lat": 41.8897,
+        "lng": -87.6334,
+        "place": "Green City Market"
+      },
+      "id": "8ddc1379-eab5-45d8-8ebd-b30f9bda10f2",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "contentHash": "3d34f6ba9ffbe1337a5fc3f949e1f37e2998b676c747f656bdd366ff92d61de4"
+    },
+    {
+      "type": "email",
+      "source": "email",
+      "title": "Recipe card scan",
+      "text": "Maria — here is the flan recipe, written exactly as my mother gave it to me in 1962. The secret is the water bath and patience. Never rush a flan.\n\nCon cariño,\nRose",
+      "occurredAt": "2020-02-20T10:00:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "from": "rose.martinez@gmail.com",
+        "to": "maria.m@gmail.com"
+      },
+      "id": "54af5e80-dba8-4492-9a0e-4b800025318a",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "0e32acd21da1e4d76f9a789fc300f63a11d50fa0039532291cf3401e71d8b323"
+    },
+    {
+      "type": "post",
+      "source": "meta_facebook",
+      "title": "Neighborhood block party",
+      "text": "Thank you to everyone who came out today. Rose's famous empanadas disappeared in twenty minutes — I'll take that as a compliment. Already planning next year.",
+      "occurredAt": "2016-08-17T20:00:00.000Z",
+      "personIds": [],
+      "metadata": {
+        "reactions": 63,
+        "lat": 41.8819,
+        "lng": -87.6231,
+        "place": "Oak Street block party"
+      },
+      "id": "fc5cf7da-e2bb-494d-becd-ca305024a11e",
+      "memorialId": "00000000-0000-4000-8000-000000000001",
+      "importedAt": "2026-08-18T16:35:57.056Z",
+      "mediaRefs": [],
+      "contentHash": "faaeafd20a71e6fda4f8c934b2f9a032f0817f2b74215edee20f7a4af2bd5ea7"
+    }
+  ],
+  "total": 25
+}

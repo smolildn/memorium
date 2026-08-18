@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Farmers market flower bouquet">
+  <rect width="1080" height="1080" fill="#f7f3ed"/>
+  <rect x="120" y="640" width="840" height="280" fill="#d4c4a8"/>
+  <rect x="180" y="500" width="720" height="180" rx="12" fill="#8b6914" opacity="0.25"/>
+  <ellipse cx="360" cy="420" rx="55" ry="70" fill="#e85d75"/>
+  <ellipse cx="420" cy="390" rx="45" ry="60" fill="#f0627a"/>
+  <ellipse cx="300" cy="400" rx="40" ry="55" fill="#d63356"/>
+  <ellipse cx="540" cy="380" rx="60" ry="75" fill="#ffb74d"/>
+  <ellipse cx="600" cy="410" rx="50" ry="65" fill="#ffa726"/>
+  <ellipse cx="480" cy="400" rx="45" ry="58" fill="#ff9800"/>
+  <ellipse cx="720" cy="400" rx="55" ry="70" fill="#ce93d8"/>
+  <ellipse cx="780" cy="430" rx="45" ry="58" fill="#ba68c8"/>
+  <ellipse cx="660" cy="420" rx="40" ry="52" fill="#ab47bc"/>
+  <rect x="500" y="520" width="80" height="200" fill="#5d4037"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">Sunday market · Apr 2020</text>
+</svg>

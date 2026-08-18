@@ -1,0 +1,17 @@
+{
+  "total": 25,
+  "type:post": 7,
+  "source:meta_facebook": 3,
+  "source:meta_instagram": 4,
+  "type:message": 13,
+  "source:meta_messenger": 2,
+  "type:email": 3,
+  "source:email": 3,
+  "source:whatsapp": 2,
+  "source:imessage": 4,
+  "source:google_messages": 2,
+  "type:note": 1,
+  "source:manual": 2,
+  "type:photo": 1,
+  "source:sms": 3
+}
