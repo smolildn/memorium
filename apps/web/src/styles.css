@@ -145,16 +145,32 @@ body {
   flex-wrap: nowrap;
   align-items: center;
   gap: 0.5rem;
+}
+
+.app-nav-scroll {
+  flex: 1;
+  min-width: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  padding-bottom: 0.15rem;
+  scrollbar-width: none;
+}
+
+.app-nav-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 .app-nav-primary {
   display: flex;
   flex-wrap: nowrap;
   gap: 0.4rem;
+  padding-bottom: 0.15rem;
+}
+
+.app-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background: rgba(44, 36, 25, 0.12);
 }
 
 .tab-icon {
@@ -177,6 +193,7 @@ body {
 
 .app-nav-more {
   position: relative;
+  flex-shrink: 0;
 }
 
 .app-nav-more-btn {
@@ -191,12 +208,13 @@ body {
   background: var(--paper);
   border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 28px rgba(44, 36, 25, 0.14);
   padding: 0.35rem;
-  z-index: 40;
+  z-index: 50;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  overflow: visible;
 }
 
 .app-nav-dropdown button {
@@ -422,21 +440,31 @@ body {
 
 .mobile-nav-more {
   position: relative;
+  flex-shrink: 0;
+}
+
+.mobile-nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  background: rgba(44, 36, 25, 0.2);
 }
 
 .mobile-nav-dropdown {
-  position: absolute;
-  bottom: calc(100% + 0.35rem);
-  right: 0;
-  min-width: 9rem;
+  position: fixed;
+  right: 0.75rem;
+  bottom: calc(3.75rem + env(safe-area-inset-bottom));
+  min-width: 10rem;
   background: var(--paper);
   border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow: var(--shadow);
+  box-shadow: 0 8px 28px rgba(44, 36, 25, 0.18);
   padding: 0.35rem;
   z-index: 60;
   display: flex;
   flex-direction: column;
+  gap: 0.15rem;
+  overflow: visible;
 }
 
 .mobile-nav-dropdown button {

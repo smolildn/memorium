@@ -37,51 +37,60 @@ export function AppNav({ tab, tabLabels, onTabChange }: Props) {
 
   return (
     <header className="app-nav-shell">
+      {moreOpen && (
+        <div
+          className="app-nav-backdrop"
+          aria-hidden="true"
+          onClick={() => setMoreOpen(false)}
+        />
+      )}
       <nav className="app-nav" aria-label="Main navigation">
-        <div className="app-nav-primary">
-          {PRIMARY.map((t) => (
-            <button
-              key={t}
-              type="button"
-              className={`tab${tab === t ? " active" : ""}${t === "profile" ? " tab--profile" : ""}`}
-              onClick={() => onTabChange(t)}
-              aria-current={tab === t ? "page" : undefined}
-            >
-              {TAB_ICONS[t] && <span className="tab-icon" aria-hidden="true">{TAB_ICONS[t]}</span>}
-              {tabLabels[t]}
-            </button>
-          ))}
-        </div>
-        <div className="app-nav-more" ref={moreRef}>
-        <button
-          type="button"
-          className={`tab app-nav-more-btn${secondaryActive ? " active" : ""}`}
-          aria-expanded={moreOpen}
-          aria-haspopup="true"
-          onClick={() => setMoreOpen((o) => !o)}
-        >
-          More{secondaryActive ? `: ${tabLabels[tab]}` : ""} ▾
-        </button>
-        {moreOpen && (
-          <div className="app-nav-dropdown" role="menu">
-            {SECONDARY.map((t) => (
+        <div className="app-nav-scroll">
+          <div className="app-nav-primary">
+            {PRIMARY.map((t) => (
               <button
                 key={t}
                 type="button"
-                role="menuitem"
-                className={tab === t ? "active" : ""}
-                onClick={() => {
-                  onTabChange(t);
-                  setMoreOpen(false);
-                }}
+                className={`tab${tab === t ? " active" : ""}${t === "profile" ? " tab--profile" : ""}`}
+                onClick={() => onTabChange(t)}
+                aria-current={tab === t ? "page" : undefined}
               >
+                {TAB_ICONS[t] && <span className="tab-icon" aria-hidden="true">{TAB_ICONS[t]}</span>}
                 {tabLabels[t]}
               </button>
             ))}
           </div>
-        )}
-      </div>
-    </nav>
+        </div>
+        <div className="app-nav-more" ref={moreRef}>
+          <button
+            type="button"
+            className={`tab app-nav-more-btn${secondaryActive ? " active" : ""}`}
+            aria-expanded={moreOpen}
+            aria-haspopup="true"
+            onClick={() => setMoreOpen((o) => !o)}
+          >
+            More{secondaryActive ? `: ${tabLabels[tab]}` : ""} ▾
+          </button>
+          {moreOpen && (
+            <div className="app-nav-dropdown" role="menu">
+              {SECONDARY.map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  role="menuitem"
+                  className={tab === t ? "active" : ""}
+                  onClick={() => {
+                    onTabChange(t);
+                    setMoreOpen(false);
+                  }}
+                >
+                  {tabLabels[t]}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </nav>
     </header>
   );
 }

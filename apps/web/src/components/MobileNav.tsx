@@ -38,48 +38,59 @@ export function MobileNav({ tab, onTabChange }: Props) {
   }, [moreOpen]);
 
   return (
-    <nav className="mobile-nav" aria-label="Main navigation">
-      {PRIMARY.map((t) => (
-        <button
-          key={t.id}
-          type="button"
-          className={tab === t.id ? "mobile-nav-btn active" : "mobile-nav-btn"}
-          onClick={() => onTabChange(t.id)}
-          aria-current={tab === t.id ? "page" : undefined}
-        >
-          <span className="mobile-nav-icon">{t.icon}</span>
-          <span>{t.label}</span>
-        </button>
-      ))}
-      <div className="mobile-nav-more" ref={moreRef}>
-        <button
-          type="button"
-          className={`mobile-nav-btn${secondaryActive ? " active" : ""}`}
-          aria-expanded={moreOpen}
-          onClick={() => setMoreOpen((o) => !o)}
-        >
-          <span className="mobile-nav-icon">⋯</span>
-          <span>More</span>
-        </button>
-        {moreOpen && (
-          <div className="mobile-nav-dropdown">
-            {SECONDARY.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                className={tab === t.id ? "active" : ""}
-                onClick={() => {
-                  onTabChange(t.id);
-                  setMoreOpen(false);
-                }}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </nav>
+    <>
+      {moreOpen && (
+        <div
+          className="mobile-nav-backdrop"
+          aria-hidden="true"
+          onClick={() => setMoreOpen(false)}
+        />
+      )}
+      <nav className="mobile-nav" aria-label="Main navigation">
+        {PRIMARY.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            className={tab === t.id ? "mobile-nav-btn active" : "mobile-nav-btn"}
+            onClick={() => onTabChange(t.id)}
+            aria-current={tab === t.id ? "page" : undefined}
+          >
+            <span className="mobile-nav-icon">{t.icon}</span>
+            <span>{t.label}</span>
+          </button>
+        ))}
+        <div className="mobile-nav-more" ref={moreRef}>
+          <button
+            type="button"
+            className={`mobile-nav-btn${secondaryActive ? " active" : ""}`}
+            aria-expanded={moreOpen}
+            aria-haspopup="true"
+            onClick={() => setMoreOpen((o) => !o)}
+          >
+            <span className="mobile-nav-icon">⋯</span>
+            <span>More</span>
+          </button>
+          {moreOpen && (
+            <div className="mobile-nav-dropdown" role="menu">
+              {SECONDARY.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="menuitem"
+                  className={tab === t.id ? "active" : ""}
+                  onClick={() => {
+                    onTabChange(t.id);
+                    setMoreOpen(false);
+                  }}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </nav>
+    </>
   );
 }
 
