@@ -36,6 +36,8 @@ import { getItemFaces } from "./utils/photos";
 
 type Tab = "today" | "timeline" | "photos" | "profile" | "collections" | "map" | "import" | "ask";
 
+const VALID_TABS: Tab[] = ["today", "timeline", "photos", "profile", "collections", "map", "import", "ask"];
+
 export function App() {
   const [memorial, setMemorial] = useState<Memorial | null>(null);
   const [people, setPeople] = useState<Person[]>([]);
@@ -109,6 +111,20 @@ export function App() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    const hash = window.location.hash.replace(/^#/, "") as Tab;
+    if (VALID_TABS.includes(hash)) {
+      setTab(hash);
+    }
+  }, []);
+
+  useEffect(() => {
+    const next = `#${tab}`;
+    if (window.location.hash !== next) {
+      window.history.replaceState(null, "", next);
+    }
+  }, [tab]);
 
   const handleSourceChange = (source: string) => {
     setSourceFilter(source);

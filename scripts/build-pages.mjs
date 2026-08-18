@@ -19,6 +19,7 @@ function run(cmd, args, env = {}) {
 }
 
 run("npm", ["run", "build", "--workspace=@memorium/core"]);
+run("npm", ["run", "build", "--workspace=@memorium/storage"]);
 run("npm", ["run", "build", "--workspace=@memorium/demo"]);
 run("npm", ["run", "build", "--workspace=@memorium/ingest"]);
 run("node", ["scripts/generate-static-demo.mjs"]);

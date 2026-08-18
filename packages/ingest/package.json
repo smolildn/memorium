@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@memorium/core": "*",
+    "@memorium/storage": "*",
     "adm-zip": "^0.5.16",
     "exifr": "^7.1.3"
   },

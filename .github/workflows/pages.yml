@@ -29,26 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build packages for demo data
-        run: |
-          npm run build --workspace=@memorium/core
-          npm run build --workspace=@memorium/demo
-          npm run build --workspace=@memorium/ingest
-
-      - name: Generate bundled demo data
-        run: node scripts/generate-static-demo.mjs
-
-      - name: Copy face recognition models
-        run: node scripts/setup-face-models.mjs
-
-      - name: Build web app (demo mode)
-        run: npm run build --workspace=@memorium/web
-        env:
-          VITE_DEMO_MODE: "true"
-          VITE_BASE: /memorium/
-
-      - name: SPA fallback for GitHub Pages
-        run: cp apps/web/dist/index.html apps/web/dist/404.html
+      - name: Build static demo (same as local build:pages)
+        run: npm run build:pages
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
