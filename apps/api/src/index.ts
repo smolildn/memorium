@@ -4,13 +4,13 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
-import { createProviderFromEnv, MemorialChat, semanticSearch } from "@memorium/ai";
+import { MemorialChat, resolveProviderFromEnv, semanticSearch } from "@memorium/ai";
 import { SearchQuerySchema } from "@memorium/core";
 import { IMPORT_SOURCES, runIngest, saveUpload } from "@memorium/ingest";
 import { listItems, onThisDay, search, stats, timeline } from "@memorium/query";
 import { Vault } from "@memorium/storage";
 
-import { authMiddleware, getMaxUploadBytes } from "./middleware.js";
+import { authMiddleware, getMaxUploadBytes, setShareValidator } from "./middleware.js";
 
 const VAULT_PATH = resolve(process.env.MEMORIUM_VAULT_PATH ?? "./data/vault");
 const PORT = parseInt(process.env.MEMORIUM_API_PORT ?? "3847", 10);
@@ -19,6 +19,13 @@ const HOST = process.env.MEMORIUM_API_HOST ?? "127.0.0.1";
 const app = new Hono();
 app.use("*", cors());
 app.use("*", authMiddleware);
+
+setShareValidator((token) => {
+  const vault = Vault.open(VAULT_PATH);
+  const valid = vault.isShareTokenValid(token);
+  vault.close();
+  return valid;
+});
 
 function getVault(): Vault {
   return Vault.open(VAULT_PATH);
@@ -182,9 +189,9 @@ app.get("/stats", (c) => {
 });
 
 app.post("/chat", async (c) => {
-  const provider = createProviderFromEnv();
+  const provider = resolveProviderFromEnv();
   if (!provider) {
-    return c.json({ error: "AI not configured. Set OPENAI_API_KEY." }, 503);
+    return c.json({ error: "AI not configured. Set OPENAI_API_KEY or MEMORIUM_AI_PROVIDER=ollama." }, 503);
   }
 
   const body = await c.req.json<{ question: string }>();
@@ -226,7 +233,7 @@ app.post("/share", async (c) => {
       token: grant.token,
       expiresAt: grant.expiresAt,
       url: `http://${HOST}:${PORT}?token=${grant.token}`,
-      note: "Share tokens are stored locally. Full read-only access via token is coming in a future release.",
+      note: "Read-only GET access: append ?token=... to the web UI URL or send X-Share-Token header.",
     });
   } catch (err) {
     vault.close();

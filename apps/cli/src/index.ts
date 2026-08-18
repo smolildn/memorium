@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 import { Command } from "commander";
 
-import { indexVault, OpenAIProvider, semanticSearch } from "@memorium/ai";
+import { indexVault, resolveProviderFromEnv, semanticSearch } from "@memorium/ai";
 import { createDemoItems, demoSubjectName } from "@memorium/demo";
 import { detectAdapter, formatExportGuide, getImportSource, IMPORT_SOURCES } from "@memorium/ingest";
 import { onThisDay, search, stats, timeline, listItems } from "@memorium/query";
@@ -158,17 +158,16 @@ program
 
 program
   .command("index-ai")
-  .description("Generate embeddings for semantic search (requires OPENAI_API_KEY)")
+  .description("Generate embeddings for semantic search (OpenAI or Ollama)")
   .option("-p, --vault <path>", "Vault directory path", DEFAULT_VAULT)
   .action(async (opts: { vault: string }) => {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      console.error("Set OPENAI_API_KEY to use AI indexing.");
+    const provider = resolveProviderFromEnv();
+    if (!provider) {
+      console.error("Set OPENAI_API_KEY or MEMORIUM_AI_PROVIDER=ollama to use AI indexing.");
       process.exit(1);
     }
 
     const vault = Vault.open(resolve(opts.vault));
-    const provider = new OpenAIProvider({ apiKey });
 
     console.log("Indexing vault for semantic search...");
     const result = await indexVault(
@@ -187,18 +186,17 @@ program
 
 program
   .command("ask")
-  .description("Ask a question using semantic search + AI (requires OPENAI_API_KEY)")
+  .description("Ask a question using semantic search + AI (OpenAI or Ollama)")
   .argument("<question>", "Your question")
   .option("-p, --vault <path>", "Vault directory path", DEFAULT_VAULT)
   .action(async (question: string, opts: { vault: string }) => {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      console.error("Set OPENAI_API_KEY to use AI features.");
+    const provider = resolveProviderFromEnv();
+    if (!provider) {
+      console.error("Set OPENAI_API_KEY or MEMORIUM_AI_PROVIDER=ollama to use AI features.");
       process.exit(1);
     }
 
     const vault = Vault.open(resolve(opts.vault));
-    const provider = new OpenAIProvider({ apiKey });
     const config = {
       provider,
       embeddingModel: process.env.MEMORIUM_EMBEDDING_MODEL ?? "text-embedding-3-small",
@@ -309,8 +307,10 @@ program
   .description("Export vault as a self-contained ZIP bundle")
   .option("-p, --vault <path>", "Vault directory path", DEFAULT_VAULT)
   .option("-o, --output <path>", "Output ZIP path", "./memorium-export.zip")
-  .action(async (opts: { vault: string; output: string }) => {
+  .option("--html <path>", "Also write a print-ready HTML memorial book")
+  .action(async (opts: { vault: string; output: string; html?: string }) => {
     const { resolve: resolvePath } = await import("node:path");
+    const { writeFileSync } = await import("node:fs");
     const AdmZip = (await import("adm-zip")).default;
 
     const vaultPath = resolvePath(opts.vault);
@@ -341,6 +341,49 @@ program
     zip.writeZip(out);
     vault.close();
     console.log(`✓ Exported ${result.items.length} items → ${out}`);
+
+    if (opts.html) {
+      const sorted = [...result.items].sort(
+        (a, b) => new Date(a.occurredAt).getTime() - new Date(b.occurredAt).getTime(),
+      );
+      const escape = (s: string) =>
+        s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+      const sections = sorted
+        .map(
+          (item) => `<article class="memory">
+  <time>${escape(new Date(item.occurredAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }))}</time>
+  <h2>${escape(item.title ?? item.type)}</h2>
+  <p class="source">${escape(item.source)}</p>
+  <div class="text">${escape(item.text).replace(/\n/g, "<br>")}</div>
+</article>`,
+        )
+        .join("\n");
+
+      const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${escape(memorial.name)} — Memorium</title>
+  <style>
+    body { font-family: Georgia, serif; max-width: 720px; margin: 2rem auto; padding: 0 1.5rem; color: #2c2416; line-height: 1.6; }
+    h1 { font-weight: normal; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem; }
+    .memory { page-break-inside: avoid; margin: 2rem 0; padding-bottom: 1.5rem; border-bottom: 1px solid #eee; }
+    time { color: #666; font-size: 0.9rem; }
+    .source { font-size: 0.85rem; color: #888; text-transform: capitalize; }
+    @media print { body { margin: 0; } }
+  </style>
+</head>
+<body>
+  <h1>${escape(memorial.name)}</h1>
+  <p class="subtitle">Memorial archive · exported ${escape(payload.exportedAt.slice(0, 10))}</p>
+  ${sections}
+</body>
+</html>`;
+
+      const htmlPath = resolvePath(opts.html);
+      writeFileSync(htmlPath, html, "utf8");
+      console.log(`✓ Wrote print-ready HTML → ${htmlPath}`);
+    }
   });
 
 program.parse();

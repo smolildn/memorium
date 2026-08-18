@@ -1,6 +1,8 @@
 import type { AIProvider, ChatMessage, ChatResponse, MemoryItem } from "@memorium/core";
 
 export { OpenAIProvider, createProviderFromEnv } from "./providers/openai.js";
+export { OllamaProvider, createOllamaProviderFromEnv } from "./providers/ollama.js";
+export { resolveProviderFromEnv } from "./providers/factory.js";
 export { MemorialChat } from "./chat.js";
 export { indexVault, semanticSearch } from "./indexer.js";
 export { buildMemorialContext, buildChatMessages, extractCitations } from "./context.js";

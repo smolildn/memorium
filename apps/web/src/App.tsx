@@ -14,7 +14,9 @@ import { AiConsentModal } from "./components/AiConsentModal";
 import { ChatPanel } from "./components/ChatPanel";
 import { CollectionsView } from "./components/CollectionsView";
 import { ImportPanel } from "./components/ImportPanel";
+import { InstagramPlatformView } from "./components/InstagramPlatformView";
 import { Lightbox } from "./components/Lightbox";
+import { MapView, extractMapPins } from "./components/MapView";
 import { MemoryCard } from "./components/MemoryCard";
 import { MobileNav } from "./components/MobileNav";
 import { OnboardingModal } from "./components/OnboardingModal";
@@ -27,7 +29,7 @@ import { useLocalFlag } from "./hooks/useLocalFlag";
 import { getSourceTheme, SOURCE_THEMES } from "./sourceThemes";
 import { extractPeople, randomMemory } from "./utils/memorial";
 
-type Tab = "today" | "timeline" | "collections" | "import" | "ask";
+type Tab = "today" | "timeline" | "collections" | "map" | "import" | "ask";
 
 export function App() {
   const [memorial, setMemorial] = useState<Memorial | null>(null);
@@ -154,10 +156,13 @@ export function App() {
 
   const todayLabel = formatDate(new Date().toISOString());
 
+  const mapPins = useMemo(() => extractMapPins(allItems), [allItems]);
+
   const tabLabels: Record<Tab, string> = {
     today: "On This Day",
     timeline: "Browse",
     collections: "Themes",
+    map: "Places",
     import: "Import",
     ask: "Ask",
   };
@@ -206,7 +211,7 @@ export function App() {
       <StatsBar stats={stats} activeSource={sourceFilter} onSourceChange={handleSourceChange} />
 
       <nav className="tabs desktop-tabs">
-        {(["today", "timeline", "collections", "import", "ask"] as Tab[]).map((t) => (
+        {(["today", "timeline", "collections", "map", "import", "ask"] as Tab[]).map((t) => (
           <button
             key={t}
             type="button"
@@ -218,7 +223,7 @@ export function App() {
         ))}
       </nav>
 
-      {tab !== "ask" && tab !== "import" && tab !== "collections" && (
+      {tab !== "ask" && tab !== "import" && tab !== "collections" && tab !== "map" && (
         <section className="toolbar">
           <form className="search-form" onSubmit={handleSearch}>
             <input
@@ -281,6 +286,11 @@ export function App() {
             activeCollection={collectionId}
             onCollectionChange={setCollectionId}
           />
+        ) : tab === "map" ? (
+          <MapView
+            pins={mapPins}
+            onSelect={(item) => scrollToMemory(item.id)}
+          />
         ) : loading ? (
           <p className="loading">Loading memories…</p>
         ) : tab === "today" ? (
@@ -329,11 +339,19 @@ export function App() {
                   <div className={`platform-shell ${activeTheme.themeClass}`}>
                     <PlatformChrome theme={activeTheme} subjectName={subjectName} />
                     <div className="platform-scroll">
-                      <PlatformFeed
-                        items={displayItems}
-                        theme={activeTheme}
-                        subjectName={subjectName}
-                      />
+                      {sourceFilter === "meta_instagram" ? (
+                        <InstagramPlatformView
+                          items={displayItems}
+                          theme={activeTheme}
+                          subjectName={subjectName}
+                        />
+                      ) : (
+                        <PlatformFeed
+                          items={displayItems}
+                          theme={activeTheme}
+                          subjectName={subjectName}
+                        />
+                      )}
                     </div>
                   </div>
                 </>

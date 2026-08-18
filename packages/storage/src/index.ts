@@ -129,6 +129,16 @@ export class Vault {
     return { token, expiresAt };
   }
 
+  isShareTokenValid(token: string): boolean {
+    const now = nowIso();
+    const row = this.db
+      .prepare(
+        `SELECT id FROM share_grants WHERE token = ? AND (expires_at IS NULL OR expires_at > ?)`,
+      )
+      .get(token, now);
+    return Boolean(row);
+  }
+
   insertPerson(person: Person): void {
     this.db
       .prepare(

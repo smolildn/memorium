@@ -37,7 +37,7 @@ export function createDemoItems(memorialId: string): MemoryItem[] {
       occurredAt: "2019-05-04T14:22:00.000Z",
       personIds: [],
       mediaRefs: [demoImage("instagram-garden.svg")],
-      metadata: { likes: 89 },
+      metadata: { likes: 89, lat: 41.8781, lng: -87.6298, place: "Rose's garden, Chicago" },
     },
     {
       type: "message",
@@ -229,7 +229,7 @@ export function createDemoItems(memorialId: string): MemoryItem[] {
       occurredAt: "2020-04-19T10:15:00.000Z",
       personIds: [],
       mediaRefs: [demoImage("instagram-market.svg")],
-      metadata: { likes: 76 },
+      metadata: { likes: 76, lat: 41.8897, lng: -87.6334, place: "Green City Market" },
     },
     {
       type: "email",
@@ -247,7 +247,7 @@ export function createDemoItems(memorialId: string): MemoryItem[] {
       text: "Thank you to everyone who came out today. Rose's famous empanadas disappeared in twenty minutes — I'll take that as a compliment. Already planning next year.",
       occurredAt: "2016-08-17T20:00:00.000Z",
       personIds: [],
-      metadata: { reactions: 63 },
+      metadata: { reactions: 63, lat: 41.8819, lng: -87.6231, place: "Oak Street block party" },
     },
   ];
 

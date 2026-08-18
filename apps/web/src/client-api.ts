@@ -11,8 +11,22 @@ import { demoApi, isDemoMode } from "./demo-api";
 const API_BASE = import.meta.env.VITE_API_BASE ?? "/api";
 const API_TOKEN = import.meta.env.VITE_API_TOKEN ?? "";
 
+function getShareToken(): string | null {
+  if (typeof window === "undefined") return null;
+  const fromUrl = new URLSearchParams(window.location.search).get("token");
+  if (fromUrl) {
+    sessionStorage.setItem("memorium-share-token", fromUrl);
+    return fromUrl;
+  }
+  return sessionStorage.getItem("memorium-share-token");
+}
+
 function authHeaders(): HeadersInit {
-  return API_TOKEN ? { Authorization: `Bearer ${API_TOKEN}` } : {};
+  const headers: Record<string, string> = {};
+  if (API_TOKEN) headers.Authorization = `Bearer ${API_TOKEN}`;
+  const share = getShareToken();
+  if (share) headers["X-Share-Token"] = share;
+  return headers;
 }
 
 async function get<T>(path: string): Promise<T> {
