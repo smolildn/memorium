@@ -190,6 +190,175 @@ The web UI can be deployed as a **static demo** (browse sample data + export gui
 
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full deployment details.
 
+## Roadmap
+
+Memorium separates **three profile concepts** so the UI stays clear:
+
+| Concept | Purpose | Status |
+|---------|---------|--------|
+| **Memorial subject** | The person being remembered (name, dates, tribute, portrait) | Hero header today; full profile page planned |
+| **People in the archive** | Family and friends who appear in photos and messages | Schema ready (`people`, `personIds`); CRUD + tagging planned |
+| **Vault operator** | You, managing imports and settings | Local-first; no cloud account required |
+
+### Phased delivery
+
+```
+Upload / photo bump ──► Ingest + EXIF ──► Photos tab + filters ──► Tags + people ──► Face assist (opt-in)
+```
+
+#### Phase 1 — Profile + photos foundation
+
+- Memorial profile page (edit name, dates, tribute, portrait)
+- People registry (add relatives, relationships, avatars)
+- **Photos** tab — grid, lightbox, filter by date / source / tag
+- Web **photo bump** (single upload + caption) and bulk photo upload
+- EXIF extraction on ingest (date, GPS, camera)
+- Normalize media into the vault and serve via the API
+
+**Deploy:** standard local stack (`npm run poc`). No AI required.
+
+#### Phase 2 — Tagging and person links
+
+- Manual person tags on any memory (“who is in this photo?”)
+- Tag taxonomy (events, places, themes)
+- Filter timeline and gallery by person or tag
+- Wire `personIds` into search (schema already supports this)
+
+**Deploy:** local stack only. Optional AI for tag *suggestions* via the wrapper (see below).
+
+#### Phase 3 — Face assist (opt-in)
+
+- Face **detection** in the browser (bounding boxes, no identity yet)
+- Manual assignment to a person in the registry
+- Optional **local** recognition suggestions after enough labeled examples
+- Consent UI: face matching runs on-device; nothing leaves the machine unless cloud AI is enabled
+
+**Deploy:** browser-local ML (e.g. face-api.js / MediaPipe) by default. Cloud vision APIs only with explicit opt-in.
+
+#### Phase 4 — Polish
+
+- Per-person photo grids (“all photos with Maria”)
+- Bulk re-tag and merge duplicate people
+- Person-specific album export (HTML / print)
+
+**Deploy:** same as Phase 1–2; export uses existing `memorium export --html`.
+
+### Design constraints (memorial context)
+
+- **Never auto-publish face labels** — human confirmation required
+- **Living vs deceased** — optional restrictions when sharing read-only links
+- **Share tokens** — read-only; no unconfirmed face suggestions exposed
+- **Profile tone** — tribute archive, not a social network
+
+---
+
+## AI wrapper
+
+The `@memorium/ai` package is an **optional layer** on top of the vault. Search, timeline, import, and export work without it. When enabled, a single provider interface powers embeddings, semantic search, and memorial chat.
+
+### How the wrapper resolves a provider
+
+```
+resolveProviderFromEnv()
+    │
+    ├─ MEMORIUM_AI_PROVIDER=ollama ──► OllamaProvider (local)
+    │
+    └─ else OPENAI_API_KEY set ──────► OpenAIProvider (cloud)
+```
+
+| Component | Role |
+|-----------|------|
+| `resolveProviderFromEnv()` | Picks Ollama or OpenAI from env (`packages/ai/src/providers/factory.ts`) |
+| `indexVault()` | Chunks memories, calls `provider.embed()`, stores vectors in SQLite |
+| `semanticSearch()` | Embeds the question, cosine-similarity against stored vectors |
+| `MemorialChat` | RAG chat with citations over retrieved memories |
+
+Used by: **CLI** (`index-ai`, `ask`), **API** (`POST /chat`), and (roadmap) tag/ caption suggestions.
+
+### Deployment by AI mode
+
+| Mode | When to use | Setup | Data leaves machine? |
+|------|-------------|-------|----------------------|
+| **No AI** | Browse, import, FTS search, export only | `npm run poc` — no extra env | No |
+| **Ollama (local)** | Private memorial chat + semantic search at home | Install [Ollama](https://ollama.com), pull models, set `MEMORIUM_AI_PROVIDER=ollama`, run `index-ai` | No |
+| **OpenAI (cloud)** | Best quality chat/embeddings when local GPU is unavailable | Set `OPENAI_API_KEY`, run `index-ai` | Yes — text chunks sent for embed/chat |
+| **Hybrid (future)** | Local vault + cloud only for Ask tab | Vault local; `OPENAI_API_KEY` for chat only | Partial |
+
+### End-to-end deploy with AI enabled
+
+**1. Base stack (always local)**
+
+```bash
+npm install && npm run build
+npm run cli -- init --name "Jane Doe"    # or seed-demo / import
+npm run poc
+```
+
+**2. Enable local AI (recommended for real archives)**
+
+```bash
+ollama pull llama3.2
+ollama pull nomic-embed-text
+
+export MEMORIUM_AI_PROVIDER=ollama
+export MEMORIUM_EMBEDDING_MODEL=nomic-embed-text
+export MEMORIUM_CHAT_MODEL=llama3.2
+
+npm run cli -- index-ai    # one-time (re-run after large imports)
+npm run poc
+```
+
+**3. Enable cloud AI (alternative)**
+
+```bash
+export OPENAI_API_KEY=sk-...
+export MEMORIUM_EMBEDDING_MODEL=text-embedding-3-small
+export MEMORIUM_CHAT_MODEL=gpt-4o-mini
+
+npm run cli -- index-ai
+npm run poc
+```
+
+**4. Secure LAN or family sharing with AI**
+
+```bash
+export MEMORIUM_API_HOST=0.0.0.0          # listen on LAN (use with care)
+export MEMORIUM_API_TOKEN=<long-secret>
+export VITE_API_TOKEN=<long-secret>
+# Keep AI provider vars from step 2 or 3
+npm run poc
+```
+
+Family read-only links use share tokens (`POST /share`); AI chat still requires the bearer token and your configured provider.
+
+**5. GitHub Pages (demo only — no AI, no vault)**
+
+Pages serves static demo JSON. Import, photo bump, indexing, and Ask require the local stack above.
+
+### AI wrapper and roadmap phases
+
+| Phase | AI wrapper role |
+|-------|-----------------|
+| Phase 1 (photos) | Not required; EXIF and media are ingest/storage |
+| Phase 2 (tags) | Optional: suggest tags or people names from caption text via `MemorialChat`-style prompts |
+| Phase 3 (faces) | **Default: browser-local** detection/recognition — not the OpenAI/Ollama wrapper |
+| Phase 3 (opt-in cloud) | Optional vision API behind the same provider interface for higher-accuracy suggestions |
+| Phase 4 (export) | Optional: AI-generated chapter intros in HTML export |
+
+Face recognition is intentionally **separate** from the chat/embed wrapper so photos never leave the device unless you explicitly opt into cloud vision.
+
+### Environment reference (AI)
+
+| Variable | Ollama example | OpenAI example |
+|----------|----------------|----------------|
+| `MEMORIUM_AI_PROVIDER` | `ollama` | *(unset)* |
+| `OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | — |
+| `OPENAI_API_KEY` | — | `sk-...` |
+| `MEMORIUM_EMBEDDING_MODEL` | `nomic-embed-text` | `text-embedding-3-small` |
+| `MEMORIUM_CHAT_MODEL` | `llama3.2` | `gpt-4o-mini` |
+
+After changing provider or model, re-run `npm run cli -- index-ai` so embeddings match the active model.
+
 ## Project structure
 
 ```
@@ -221,7 +390,7 @@ memorium/
 | Android SMS | ✅ | SMS Backup & Restore `.xml` |
 | Google Messages | ✅ | Takeout JSON |
 | iPhone iMessage | ✅ | `chat.db` or CSV export |
-| Raw photos/videos | ✅ | EXIF date extraction |
+| Raw photos/videos | ✅ Framework | Folder ingest; EXIF + vault media copy on roadmap |
 | Google Photos | 🔲 Planned | Takeout JSON + media |
 
 ## Privacy principles
