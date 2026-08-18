@@ -210,11 +210,6 @@ export function App() {
     }
   };
 
-  const handleSlideshow = (startId?: string) => {
-    setSlideshowStartItemId(startId);
-    setSlideshowOpen(true);
-  };
-
   const todayLabel = formatDate(new Date().toISOString());
 
   const mapPins = useMemo(() => extractMapPins(allItems), [allItems]);
@@ -280,7 +275,6 @@ export function App() {
           allItems={allItems}
           stats={stats}
           onSurprise={handleSurprise}
-          onSlideshow={() => handleSlideshow()}
           onOpenProfile={() => setTab("profile")}
         />
       )}

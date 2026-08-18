@@ -48,7 +48,7 @@ export function SlideshowModal({ items, subjectName, startItemId, onClose }: Pro
       className="slideshow-overlay"
       role="dialog"
       aria-modal="true"
-      aria-label="Memory lane slideshow"
+      aria-label="Memory slideshow"
       onClick={onClose}
     >
       <button type="button" className="slideshow-close" onClick={onClose} aria-label="Close">

@@ -7,11 +7,10 @@ interface Props {
   allItems: MemoryItem[];
   stats: Record<string, number>;
   onSurprise: () => void;
-  onSlideshow: () => void;
   onOpenProfile?: () => void;
 }
 
-export function PersonHero({ memorial, allItems, stats, onSurprise, onSlideshow, onOpenProfile }: Props) {
+export function PersonHero({ memorial, allItems, stats, onSurprise, onOpenProfile }: Props) {
   const total = stats.total ?? allItems.length;
   const sourceCount = Object.keys(stats).filter((k) => k.startsWith("source:")).length;
   const quote = quoteOfDay(allItems);
@@ -74,9 +73,6 @@ export function PersonHero({ memorial, allItems, stats, onSurprise, onSlideshow,
             )}
             <button type="button" className="hero-btn hero-btn--secondary" onClick={onSurprise}>
               ✨ Surprise me
-            </button>
-            <button type="button" className="hero-btn hero-btn--secondary" onClick={onSlideshow}>
-              ▶ Memory lane
             </button>
           </div>
         </div>
