@@ -1,16 +1,19 @@
 import { useState } from "react";
 
-import { api, formatDate, isDemoMode, type Memorial, type Person } from "../api";
+import { api, formatDate, isDemoMode, type Memorial, type MemoryItem, type Person } from "../api";
 import { mediaUrl } from "../mediaUrl";
 import { ensureFaceModels, learnFaceFromPortrait } from "../utils/faceRecognition";
+import { FindPersonModal } from "./FindPersonModal";
 
 interface Props {
   memorial: Memorial;
   people: Person[];
+  allItems: MemoryItem[];
   onUpdated: (memorial: Memorial, people: Person[]) => void;
+  onItemsChange: (items: MemoryItem[]) => void;
 }
 
-export function ProfileView({ memorial, people, onUpdated }: Props) {
+export function ProfileView({ memorial, people, allItems, onUpdated, onItemsChange }: Props) {
   const demo = isDemoMode();
   const subject = people.find((p) => p.isSubject) ?? people[0];
   const [editing, setEditing] = useState(false);
@@ -22,6 +25,7 @@ export function ProfileView({ memorial, people, onUpdated }: Props) {
   const [newPersonRel, setNewPersonRel] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [findPerson, setFindPerson] = useState<Person | null>(null);
 
   const portraitSrc = memorial.portraitPath
     ? mediaUrl({ vaultPath: memorial.portraitPath })
@@ -219,6 +223,15 @@ export function ProfileView({ memorial, people, onUpdated }: Props) {
                   Learn face from photo
                 </button>
               )}
+              <button
+                type="button"
+                className="link-btn profile-find-face"
+                disabled={saving}
+                onClick={() => setFindPerson(person)}
+                title="Search all photos for this person's face"
+              >
+                Find in all photos
+              </button>
             </li>
           ))}
         </ul>
@@ -246,6 +259,16 @@ export function ProfileView({ memorial, people, onUpdated }: Props) {
           </form>
         )}
       </section>
+
+      {findPerson && (
+        <FindPersonModal
+          person={findPerson}
+          allItems={allItems}
+          demo={demo}
+          onClose={() => setFindPerson(null)}
+          onSaved={onItemsChange}
+        />
+      )}
 
       {subject && (
         <section className="profile-about">

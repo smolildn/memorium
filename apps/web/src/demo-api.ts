@@ -15,6 +15,7 @@ import {
   demoStats,
   demoTimeline,
 } from "./generated/demo-data";
+import { generateId } from "./utils/id";
 
 let cache: {
   memorial: Memorial;
@@ -103,25 +104,35 @@ export const demoApi = {
     throw new Error("Portrait upload requires the local app.");
   },
 
-  createPerson: async (): Promise<Person> => {
-    throw new Error("Adding people requires the local app.");
+  createPerson: async (body: { name: string; relationship?: string }): Promise<Person> => {
+    const person: Person = {
+      id: generateId(),
+      name: body.name,
+      relationship: body.relationship,
+    };
+    DEMO_PEOPLE.push(person);
+    return person;
   },
 
   updatePerson: async (id: string, body: Partial<Person>): Promise<Person> => {
     const person = DEMO_PEOPLE.find((p) => p.id === id);
     if (!person) throw new Error("Person not found");
-    return { ...person, ...body };
+    Object.assign(person, body);
+    return { ...person };
   },
 
   updateItem: async (id: string, body: Partial<MemoryItem>): Promise<MemoryItem> => {
     const { items } = await loadDemo();
-    const item = items.find((i) => i.id === id);
-    if (!item) throw new Error("Item not found");
-    return {
+    const idx = items.findIndex((i) => i.id === id);
+    if (idx === -1) throw new Error("Item not found");
+    const item = items[idx]!;
+    const updated: MemoryItem = {
       ...item,
       ...body,
       metadata: body.metadata ? { ...item.metadata, ...body.metadata } : item.metadata,
     };
+    items[idx] = updated;
+    return updated;
   },
 
   uploadPhotos: async (): Promise<{ ok: boolean; count: number }> => {

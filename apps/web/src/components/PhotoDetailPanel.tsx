@@ -6,6 +6,7 @@ import {
   PHOTO_FILTER_CSS,
   getItemFaces,
   getItemTags,
+  mergePersonIdsFromFaces,
   type PhotoFilterPreset,
 } from "../utils/photos";
 import {
@@ -23,7 +24,9 @@ interface Props {
   allItems: MemoryItem[];
   onClose: () => void;
   onSave: (item: MemoryItem) => void;
+  onPeopleChange?: (people: Person[]) => void;
   readOnly?: boolean;
+  demo?: boolean;
 }
 
 export function PhotoDetailPanel({
@@ -32,7 +35,9 @@ export function PhotoDetailPanel({
   allItems,
   onClose,
   onSave,
+  onPeopleChange,
   readOnly = false,
+  demo = false,
 }: Props) {
   const ref = item.mediaRefs?.[0];
   const src = ref ? mediaUrl(ref) : "";
@@ -44,6 +49,11 @@ export function PhotoDetailPanel({
   const [detecting, setDetecting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [addingPersonForFace, setAddingPersonForFace] = useState<string | null>(null);
+  const [newPersonName, setNewPersonName] = useState("");
+  const [creatingPerson, setCreatingPerson] = useState(false);
+
+  const canEdit = !readOnly || demo;
 
   const personName = (id: string) => people.find((p) => p.id === id)?.name ?? "Unknown";
 
@@ -58,17 +68,20 @@ export function PhotoDetailPanel({
     setSaving(true);
     setError(null);
     try {
-      const mergedPersonIds = [
-        ...new Set([
-          ...personIds,
-          ...faces.map((f) => f.personId).filter((id): id is string => Boolean(id)),
-        ]),
-      ];
+      const mergedPersonIds = mergePersonIdsFromFaces(personIds, faces);
+      const payload = { metadata: { tags, faces }, personIds: mergedPersonIds };
+
+      if (demo) {
+        onSave({
+          ...item,
+          ...payload,
+          metadata: { ...item.metadata, ...payload.metadata },
+        });
+        return;
+      }
+
       const { api } = await import("../client-api.js");
-      const updated = await api.updateItem(item.id, {
-        metadata: { tags, faces },
-        personIds: mergedPersonIds,
-      });
+      const updated = await api.updateItem(item.id, payload);
       onSave(updated);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Save failed");
@@ -96,7 +109,41 @@ export function PhotoDetailPanel({
   };
 
   const assignFace = (faceId: string, personId: string) => {
+    if (personId === "__new__") {
+      setAddingPersonForFace(faceId);
+      setNewPersonName("");
+      return;
+    }
+    setAddingPersonForFace(null);
     setFaces(faces.map((f) => (f.id === faceId ? { ...f, personId: personId || undefined } : f)));
+    if (personId && !personIds.includes(personId)) {
+      setPersonIds([...personIds, personId]);
+    }
+  };
+
+  const createAndAssignPerson = async (faceId: string) => {
+    const name = newPersonName.trim();
+    if (!name) return;
+    setCreatingPerson(true);
+    setError(null);
+    try {
+      const { api } = await import("../client-api.js");
+      const created = await api.createPerson({ name });
+      const refreshed = await api.people();
+      onPeopleChange?.(refreshed);
+      setFaces(
+        faces.map((f) =>
+          f.id === faceId ? { ...f, personId: created.id, label: created.name } : f,
+        ),
+      );
+      setPersonIds([...personIds, created.id]);
+      setAddingPersonForFace(null);
+      setNewPersonName("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not create person");
+    } finally {
+      setCreatingPerson(false);
+    }
   };
 
   const addManualFace = () => {
@@ -144,6 +191,12 @@ export function PhotoDetailPanel({
           <div className="photo-detail-meta">
             <h2>{item.title ?? "Photo"}</h2>
             <p className="photo-detail-date">{formatDate(item.occurredAt)}</p>
+
+            {demo && canEdit && (
+              <p className="demo-inline-notice" role="status">
+                Demo mode — face tags save to this session only.
+              </p>
+            )}
 
             {error && <p className="error-banner">{error}</p>}
 
@@ -220,7 +273,7 @@ export function PhotoDetailPanel({
 
             <section>
               <h3>Faces</h3>
-              {!readOnly && (
+              {canEdit && (
                 <div className="face-actions">
                   <button type="button" onClick={() => void runFaceDetect()} disabled={detecting}>
                     {detecting ? "Detecting…" : "Detect faces"}
@@ -245,18 +298,49 @@ export function PhotoDetailPanel({
                           </span>
                         )}
                       </span>
-                      <select
-                        value={face.personId ?? ""}
-                        disabled={readOnly}
-                        onChange={(e) => assignFace(face.id, e.target.value)}
-                      >
-                        <option value="">— Select person —</option>
-                        {people.map((p) => (
-                          <option key={p.id} value={p.id}>
-                            {p.name}
-                          </option>
-                        ))}
-                      </select>
+                      {addingPersonForFace === face.id ? (
+                        <div className="face-add-person-row">
+                          <input
+                            value={newPersonName}
+                            onChange={(e) => setNewPersonName(e.target.value)}
+                            placeholder="New person name…"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                void createAndAssignPerson(face.id);
+                              }
+                            }}
+                          />
+                          <button
+                            type="button"
+                            disabled={creatingPerson || !newPersonName.trim()}
+                            onClick={() => void createAndAssignPerson(face.id)}
+                          >
+                            {creatingPerson ? "…" : "Add"}
+                          </button>
+                          <button
+                            type="button"
+                            className="link-btn"
+                            onClick={() => setAddingPersonForFace(null)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <select
+                          value={face.personId ?? ""}
+                          disabled={!canEdit}
+                          onChange={(e) => assignFace(face.id, e.target.value)}
+                        >
+                          <option value="">— Select person —</option>
+                          {people.map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.name}
+                            </option>
+                          ))}
+                          {canEdit && <option value="__new__">+ Add new person…</option>}
+                        </select>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -286,7 +370,7 @@ export function PhotoDetailPanel({
               </section>
             )}
 
-            {!readOnly && (
+            {canEdit && (
               <button type="button" className="hero-btn" onClick={() => void save()} disabled={saving}>
                 {saving ? "Saving…" : "Save changes"}
               </button>

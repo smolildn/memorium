@@ -331,16 +331,19 @@ export function App() {
             allItems={allItems}
             people={people}
             onItemsChange={setAllItems}
+            onPeopleChange={setPeople}
           />
         ) : tab === "profile" ? (
           memorial ? (
             <ProfileView
               memorial={memorial}
               people={people}
+              allItems={allItems}
               onUpdated={(m, p) => {
                 setMemorial(m);
                 setPeople(p);
               }}
+              onItemsChange={setAllItems}
             />
           ) : (
             <p className="loading">Loading profile…</p>

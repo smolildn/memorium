@@ -1,7 +1,12 @@
 import type { Person, MemoryItem } from "../api";
 import { mediaUrl } from "../mediaUrl";
 import { generateId } from "./id";
-import { getItemFaces, type FaceRegion } from "./photos";
+import {
+  getItemFaces,
+  isPhotoItem,
+  mergePersonIdsFromFaces,
+  type FaceRegion,
+} from "./photos";
 
 /** Default euclidean distance threshold — lower distance = more similar (face-api convention) */
 export const FACE_MATCH_THRESHOLD = 0.6;
@@ -272,12 +277,7 @@ export async function scanPhotoForFaces(
   faces = applyRecognitionToFaces(faces, gallery);
 
   const suggested = faces.filter((f) => f.personId).length;
-  const personIds = [
-    ...new Set([
-      ...item.personIds,
-      ...faces.map((f) => f.personId).filter((id): id is string => Boolean(id)),
-    ]),
-  ];
+  const personIds = mergePersonIdsFromFaces(item.personIds, faces);
 
   const updated: MemoryItem = {
     ...item,
@@ -286,6 +286,101 @@ export async function scanPhotoForFaces(
   };
 
   return { itemId: item.id, facesFound: faces.length, suggested, updated };
+}
+
+/** Reference embedding from portrait learn or any labeled face in the archive. */
+export function getPersonReferenceEmbedding(
+  person: Person,
+  items: MemoryItem[],
+): Float32Array | null {
+  if (person.faceEmbedding?.length === 128) {
+    return new Float32Array(person.faceEmbedding);
+  }
+  for (const item of items) {
+    for (const face of getItemFaces(item)) {
+      if (face.personId === person.id && face.embedding?.length === 128) {
+        return new Float32Array(face.embedding);
+      }
+    }
+  }
+  return null;
+}
+
+export interface PersonFaceMatch {
+  itemId: string;
+  itemTitle?: string;
+  faceId: string;
+  distance: number;
+}
+
+export interface FindPersonResult {
+  personId: string;
+  photosScanned: number;
+  facesMatched: number;
+  matches: PersonFaceMatch[];
+  /** Items with newly tagged faces (not yet persisted). */
+  updates: MemoryItem[];
+}
+
+/** Scan all photos for faces matching a reference embedding; tag matches in memory only. */
+export async function findPersonInArchive(
+  items: MemoryItem[],
+  personId: string,
+  referenceEmbedding: Float32Array,
+  onProgress?: (current: number, total: number) => void,
+  threshold = FACE_MATCH_THRESHOLD,
+): Promise<FindPersonResult> {
+  await ensureFaceModels();
+  const photos = items.filter(isPhotoItem);
+  const updates: MemoryItem[] = [];
+  const matches: PersonFaceMatch[] = [];
+  let facesMatched = 0;
+
+  for (let i = 0; i < photos.length; i++) {
+    const item = photos[i]!;
+    onProgress?.(i + 1, photos.length);
+
+    const ref = item.mediaRefs?.[0];
+    if (!ref?.mimeType?.startsWith("image/")) continue;
+
+    let faces = getItemFaces(item);
+    const needsDetect = faces.length === 0 || faces.some((f) => !f.embedding?.length);
+
+    if (needsDetect) {
+      const img = await loadImageElement(mediaUrl(ref));
+      faces = await detectFacesInImage(img);
+    }
+
+    let changed = false;
+    const updatedFaces = faces.map((face) => {
+      if (!face.embedding?.length) return face;
+      if (face.personId && face.personId !== personId) return face;
+
+      const distance = euclideanDistance(new Float32Array(face.embedding), referenceEmbedding);
+      if (distance > threshold) return face;
+      if (face.personId === personId) return face;
+
+      changed = true;
+      facesMatched++;
+      matches.push({
+        itemId: item.id,
+        itemTitle: item.title,
+        faceId: face.id,
+        distance,
+      });
+      return { ...face, personId, matchDistance: distance };
+    });
+
+    if (changed) {
+      updates.push({
+        ...item,
+        personIds: mergePersonIdsFromFaces(item.personIds, updatedFaces),
+        metadata: { ...item.metadata, faces: updatedFaces },
+      });
+    }
+  }
+
+  return { personId, photosScanned: photos.length, facesMatched, matches, updates };
 }
 
 declare global {

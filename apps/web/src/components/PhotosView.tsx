@@ -14,9 +14,10 @@ interface Props {
   allItems: MemoryItem[];
   people: Person[];
   onItemsChange: (items: MemoryItem[]) => void;
+  onPeopleChange?: (people: Person[]) => void;
 }
 
-export function PhotosView({ allItems, people, onItemsChange }: Props) {
+export function PhotosView({ allItems, people, onItemsChange, onPeopleChange }: Props) {
   const demo = isDemoMode();
   const inputRef = useRef<HTMLInputElement>(null);
   const [year, setYear] = useState("");
@@ -74,7 +75,6 @@ export function PhotosView({ allItems, people, onItemsChange }: Props) {
   };
 
   const scanArchive = async () => {
-    if (demo) return;
     setScanning(true);
     setError(null);
     setScanProgress("Loading models…");
@@ -101,11 +101,15 @@ export function PhotosView({ allItems, people, onItemsChange }: Props) {
         const result = await scanPhotoForFaces(item, gallery);
         if (!result || result.facesFound === 0) continue;
 
-        const saved = await api.updateItem(result.updated.id, {
-          metadata: result.updated.metadata,
-          personIds: result.updated.personIds,
-        });
-        updatedItems = updatedItems.map((it) => (it.id === saved.id ? saved : it));
+        if (demo) {
+          updatedItems = updatedItems.map((it) => (it.id === result.updated.id ? result.updated : it));
+        } else {
+          const saved = await api.updateItem(result.updated.id, {
+            metadata: result.updated.metadata,
+            personIds: result.updated.personIds,
+          });
+          updatedItems = updatedItems.map((it) => (it.id === saved.id ? saved : it));
+        }
         if (result.suggested > 0) labeled += result.suggested;
         gallery = buildFaceGallery(updatedItems, people);
       }
@@ -199,6 +203,17 @@ export function PhotosView({ allItems, people, onItemsChange }: Props) {
             {scanning ? scanProgress || "Scanning…" : "Scan archive for faces"}
           </button>
         )}
+        {demo && (
+          <button
+            type="button"
+            className="hero-btn hero-btn--secondary photos-scan-btn"
+            disabled={scanning || uploading}
+            onClick={() => void scanArchive()}
+            title="Demo mode — results stay in this session"
+          >
+            {scanning ? scanProgress || "Scanning…" : "Scan archive (demo)"}
+          </button>
+        )}
       </div>
 
       {scanProgress && !scanning && (
@@ -238,7 +253,9 @@ export function PhotosView({ allItems, people, onItemsChange }: Props) {
           allItems={allItems}
           onClose={() => setSelected(null)}
           onSave={handleItemSaved}
+          onPeopleChange={onPeopleChange}
           readOnly={demo}
+          demo={demo}
         />
       )}
     </div>

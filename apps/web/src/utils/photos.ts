@@ -21,6 +21,16 @@ export function getItemTags(item: MemoryItem): string[] {
   return Array.isArray(tags) ? tags.filter((t): t is string => typeof t === "string") : [];
 }
 
+/** Merge item.personIds with any personIds referenced on face regions. */
+export function mergePersonIdsFromFaces(existingPersonIds: string[], faces: FaceRegion[]): string[] {
+  return [
+    ...new Set([
+      ...existingPersonIds,
+      ...faces.map((f) => f.personId).filter((id): id is string => Boolean(id)),
+    ]),
+  ];
+}
+
 export function getItemFaces(item: MemoryItem): FaceRegion[] {
   const faces = item.metadata.faces;
   if (!Array.isArray(faces)) return [];
