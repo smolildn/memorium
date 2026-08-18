@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Rose garden in bloom">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e8f4f8"/>
+      <stop offset="100%" stop-color="#f7f3ed"/>
+    </linearGradient>
+    <linearGradient id="petal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e85d75"/>
+      <stop offset="100%" stop-color="#c41e3a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#sky)"/>
+  <rect y="720" width="1080" height="360" fill="#7a9b5a"/>
+  <rect y="700" width="1080" height="40" fill="#5c7a42"/>
+  <circle cx="280" cy="520" r="95" fill="url(#petal)" opacity="0.95"/>
+  <circle cx="340" cy="470" r="80" fill="#f0627a"/>
+  <circle cx="220" cy="470" r="75" fill="#d63356"/>
+  <circle cx="280" cy="410" r="70" fill="url(#petal)"/>
+  <circle cx="540" cy="480" r="110" fill="url(#petal)"/>
+  <circle cx="620" cy="420" r="85" fill="#f0627a"/>
+  <circle cx="460" cy="420" r="80" fill="#d63356"/>
+  <circle cx="540" cy="350" r="75" fill="#e85d75"/>
+  <circle cx="780" cy="510" r="90" fill="url(#petal)"/>
+  <circle cx="850" cy="460" r="70" fill="#f0627a"/>
+  <circle cx="720" cy="450" r="65" fill="#d63356"/>
+  <ellipse cx="280" cy="690" rx="12" ry="80" fill="#2d5016"/>
+  <ellipse cx="540" cy="680" rx="14" ry="95" fill="#2d5016"/>
+  <ellipse cx="780" cy="695" rx="12" ry="85" fill="#2d5016"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">Rose's garden · May 2019</text>
+</svg>

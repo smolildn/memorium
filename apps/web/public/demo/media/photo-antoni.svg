@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Portrait of Antonio Martinez">
+  <rect width="1080" height="1080" fill="#292524"/>
+  <rect x="140" y="140" width="800" height="800" rx="8" fill="#44403c"/>
+  <circle cx="540" cy="420" r="160" fill="#d4a574"/>
+  <rect x="340" y="600" width="400" height="280" rx="40" fill="#57534e"/>
+  <rect x="380" y="640" width="320" height="20" rx="4" fill="#78716c"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#fafaf9" opacity="0.7">Antonio Martinez · circa 1985</text>
+</svg>

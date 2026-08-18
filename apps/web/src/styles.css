@@ -337,6 +337,15 @@ body {
   display: none;
 }
 
+.sidebar-section summary::before {
+  content: "▸ ";
+  color: var(--accent);
+}
+
+.sidebar-section[open] summary::before {
+  content: "▾ ";
+}
+
 .sidebar-active-tag {
   font-size: 0.75rem;
   font-weight: 500;

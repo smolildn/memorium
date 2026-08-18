@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { SOURCE_LABELS } from "../api";
 import { SOURCE_THEMES } from "../sourceThemes";
 import type { Person, TimelinePeriod } from "../api";
@@ -52,6 +54,22 @@ export function BrowseSidebar({
   const activeFilters =
     (sourceFilter ? 1 : 0) + (personFilter ? 1 : 0) + (periodFilter ? 1 : 0);
 
+  const [periodOpen, setPeriodOpen] = useState(false);
+  const [sourceOpen, setSourceOpen] = useState(false);
+  const [peopleOpen, setPeopleOpen] = useState(false);
+
+  useEffect(() => {
+    setPeriodOpen(!!periodFilter);
+  }, [periodFilter]);
+
+  useEffect(() => {
+    setSourceOpen(!!sourceFilter);
+  }, [sourceFilter]);
+
+  useEffect(() => {
+    setPeopleOpen(!!personFilter);
+  }, [personFilter]);
+
   return (
     <>
       {mobileOpen && (
@@ -96,8 +114,17 @@ export function BrowseSidebar({
           <button type="submit">Go</button>
         </form>
 
-        <details className="sidebar-section" open>
-          <summary>Through the years</summary>
+        <details
+          className="sidebar-section"
+          open={periodOpen}
+          onToggle={(e) => setPeriodOpen(e.currentTarget.open)}
+        >
+          <summary>
+            Through the years
+            {periodFilter && (
+              <span className="sidebar-active-tag">{formatPeriod(periodFilter)}</span>
+            )}
+          </summary>
           <ul className="sidebar-period-list">
             <li>
               <button
@@ -124,7 +151,11 @@ export function BrowseSidebar({
           </ul>
         </details>
 
-        <details className="sidebar-section">
+        <details
+          className="sidebar-section"
+          open={sourceOpen}
+          onToggle={(e) => setSourceOpen(e.currentTarget.open)}
+        >
           <summary>
             Sources
             {sourceFilter && (
@@ -161,7 +192,11 @@ export function BrowseSidebar({
         </details>
 
         {(people.length > 0 || messageSenders.length > 0) && (
-          <details className="sidebar-section">
+          <details
+            className="sidebar-section"
+            open={peopleOpen}
+            onToggle={(e) => setPeopleOpen(e.currentTarget.open)}
+          >
             <summary>
               People
               {personFilter && <span className="sidebar-active-tag">{personFilter}</span>}

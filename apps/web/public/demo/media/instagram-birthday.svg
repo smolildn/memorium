@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="80th birthday cake with candles">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#fce7f3"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <rect x="220" y="520" width="640" height="320" rx="40" fill="#fcd34d"/>
+  <rect x="260" y="480" width="560" height="80" rx="20" fill="#fde68a"/>
+  <rect x="300" y="440" width="480" height="70" rx="18" fill="#fef08a"/>
+  <text x="540" y="700" text-anchor="middle" font-family="Georgia, serif" font-size="96" fill="#c2410c">80</text>
+  <rect x="320" y="360" width="16" height="90" fill="#f97316"/>
+  <rect x="380" y="350" width="16" height="100" fill="#f97316"/>
+  <rect x="440" y="345" width="16" height="105" fill="#f97316"/>
+  <rect x="500" y="340" width="16" height="110" fill="#f97316"/>
+  <rect x="560" y="345" width="16" height="105" fill="#f97316"/>
+  <rect x="620" y="350" width="16" height="100" fill="#f97316"/>
+  <rect x="680" y="360" width="16" height="90" fill="#f97316"/>
+  <ellipse cx="328" cy="350" rx="12" ry="18" fill="#fde047"/>
+  <ellipse cx="388" cy="340" rx="12" ry="18" fill="#fde047"/>
+  <ellipse cx="448" cy="335" rx="12" ry="18" fill="#fde047"/>
+  <ellipse cx="508" cy="330" rx="12" ry="18" fill="#fde047"/>
+  <ellipse cx="568" cy="335" rx="12" ry="18" fill="#fde047"/>
+  <ellipse cx="628" cy="340" rx="12" ry="18" fill="#fde047"/>
+  <ellipse cx="688" cy="350" rx="12" ry="18" fill="#fde047"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">Rose turns 80 · March 2022</text>
+</svg>

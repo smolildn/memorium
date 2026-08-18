@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Neighborhood block party with food tables">
+  <rect width="1080" height="1080" fill="#fef9c3"/>
+  <rect y="700" width="1080" height="380" fill="#78716c"/>
+  <rect x="60" y="80" width="220" height="280" fill="#fca5a5"/>
+  <rect x="320" y="100" width="220" height="260" fill="#fdba74"/>
+  <rect x="580" y="90" width="220" height="270" fill="#fcd34d"/>
+  <rect x="840" y="110" width="180" height="250" fill="#86efac"/>
+  <rect x="140" y="480" width="800" height="40" rx="4" fill="#a16207"/>
+  <rect x="180" y="520" width="720" height="120" rx="8" fill="#fffdf9"/>
+  <ellipse cx="300" cy="560" rx="50" ry="30" fill="#fbbf24"/>
+  <ellipse cx="480" cy="555" rx="55" ry="32" fill="#ea580c"/>
+  <ellipse cx="660" cy="560" rx="48" ry="28" fill="#16a34a"/>
+  <circle cx="540" cy="380" r="35" fill="#f4d6b8"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">Oak Street block party · Aug 2016</text>
+</svg>

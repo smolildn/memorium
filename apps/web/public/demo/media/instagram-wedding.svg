@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Wedding day outside St Mary's church">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dbeafe"/>
+      <stop offset="100%" stop-color="#f7f3ed"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#sky)"/>
+  <rect x="280" y="180" width="520" height="620" rx="8" fill="#f5f0e8" stroke="#c4b5a0" stroke-width="6"/>
+  <polygon points="540,120 760,220 320,220" fill="#8b4513"/>
+  <rect x="470" y="520" width="140" height="280" fill="#654321"/>
+  <circle cx="420" cy="680" r="55" fill="#fffdf9"/>
+  <circle cx="620" cy="680" r="55" fill="#fffdf9"/>
+  <rect x="380" y="620" width="80" height="120" rx="40" fill="#2c2419" opacity="0.7"/>
+  <rect x="620" y="620" width="80" height="120" rx="40" fill="#2c2419" opacity="0.7"/>
+  <circle cx="420" cy="580" r="35" fill="#f4d6b8"/>
+  <circle cx="620" cy="580" r="35" fill="#e8c4a0"/>
+  <text x="540" y="980" text-anchor="middle" font-family="Georgia, serif" font-size="42" fill="#2c2419" opacity="0.55">St. Mary's · September 1978</text>
+</svg>
