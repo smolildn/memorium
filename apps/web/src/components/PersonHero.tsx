@@ -66,11 +66,6 @@ export function PersonHero({ memorial, allItems, stats, onSurprise, onOpenProfil
             </blockquote>
           )}
           <div className="person-hero-actions">
-            {onOpenProfile && (
-              <button type="button" className="hero-btn" onClick={onOpenProfile}>
-                ◉ Profile
-              </button>
-            )}
             <button type="button" className="hero-btn hero-btn--secondary" onClick={onSurprise}>
               ✨ Surprise me
             </button>
