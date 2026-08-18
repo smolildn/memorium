@@ -67,7 +67,12 @@ export function PersonHero({ memorial, allItems, stats, onSurprise, onSlideshow,
             </blockquote>
           )}
           <div className="person-hero-actions">
-            <button type="button" className="hero-btn" onClick={onSurprise}>
+            {onOpenProfile && (
+              <button type="button" className="hero-btn" onClick={onOpenProfile}>
+                ◉ Profile
+              </button>
+            )}
+            <button type="button" className="hero-btn hero-btn--secondary" onClick={onSurprise}>
               ✨ Surprise me
             </button>
             <button type="button" className="hero-btn hero-btn--secondary" onClick={onSlideshow}>

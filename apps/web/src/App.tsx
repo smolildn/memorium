@@ -12,6 +12,8 @@ import {
   type TimelinePeriod,
 } from "./api";
 import { AiConsentModal } from "./components/AiConsentModal";
+import { AppNav } from "./components/AppNav";
+import { BrowseSidebar } from "./components/BrowseSidebar";
 import { ChatPanel } from "./components/ChatPanel";
 import { CollectionsView } from "./components/CollectionsView";
 import { ImportPanel } from "./components/ImportPanel";
@@ -27,10 +29,10 @@ import { PhotosView } from "./components/PhotosView";
 import { ProfileView } from "./components/ProfileView";
 import { PlatformChrome, PlatformFeed } from "./components/PlatformFeed";
 import { SlideshowModal } from "./components/SlideshowModal";
-import { StatsBar } from "./components/StatsBar";
 import { useLocalFlag } from "./hooks/useLocalFlag";
-import { getSourceTheme, SOURCE_THEMES } from "./sourceThemes";
+import { getSourceTheme } from "./sourceThemes";
 import { extractPeople, randomMemory } from "./utils/memorial";
+import { getItemFaces } from "./utils/photos";
 
 type Tab = "today" | "timeline" | "photos" | "profile" | "collections" | "map" | "import" | "ask";
 
@@ -46,6 +48,8 @@ export function App() {
   const [searchResults, setSearchResults] = useState<MemoryItem[] | null>(null);
   const [sourceFilter, setSourceFilter] = useState("");
   const [personFilter, setPersonFilter] = useState("");
+  const [periodFilter, setPeriodFilter] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collectionId, setCollectionId] = useState("kitchen");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,14 +64,30 @@ export function App() {
     setLoading(true);
     setError(null);
     try {
-      const [m, p, i, t, td, s] = await Promise.all([
+      const [m, i, t, td, s] = await Promise.all([
         api.memorial(),
-        api.people(),
         api.items({ limit: 500 }),
         api.timeline(),
         api.today(),
         api.stats(),
       ]);
+
+      let p: Person[] = [];
+      try {
+        p = await api.people();
+      } catch {
+        p = [
+          {
+            id: "subject-fallback",
+            name: m.name,
+            isSubject: true,
+            bornAt: m.bornAt,
+            diedAt: m.diedAt,
+            avatarPath: m.portraitPath,
+          },
+        ];
+      }
+
       setMemorial(m);
       setPeople(p);
       setAllItems(i.items);
@@ -95,6 +115,18 @@ export function App() {
     setQuery("");
     setSearchResults(null);
     if (source && tab === "today") setTab("timeline");
+    setSidebarOpen(false);
+  };
+
+  const handlePersonFilterChange = (person: string) => {
+    setPersonFilter(person);
+    setSidebarOpen(false);
+  };
+
+  const handlePeriodChange = (period: string) => {
+    setPeriodFilter(period);
+    if (period && tab === "today") setTab("timeline");
+    setSidebarOpen(false);
   };
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -123,13 +155,18 @@ export function App() {
   const displayItems = useMemo(() => {
     let list = baseItems;
     if (sourceFilter) list = list.filter((i) => i.source === sourceFilter);
+    if (periodFilter) list = list.filter((i) => i.occurredAt.startsWith(periodFilter));
     if (personFilter) {
-      list = list.filter(
-        (i) => typeof i.metadata.sender === "string" && i.metadata.sender === personFilter,
-      );
+      const registryPerson = people.find((p) => p.name === personFilter);
+      list = list.filter((i) => {
+        if (typeof i.metadata.sender === "string" && i.metadata.sender === personFilter) return true;
+        if (registryPerson && i.personIds.includes(registryPerson.id)) return true;
+        if (registryPerson && getItemFaces(i).some((f) => f.personId === registryPerson.id)) return true;
+        return false;
+      });
     }
     return list;
-  }, [baseItems, sourceFilter, personFilter]);
+  }, [baseItems, sourceFilter, periodFilter, personFilter, people]);
 
   const messageSenders = useMemo(() => extractPeople(allItems), [allItems]);
   const subjectName = memorial?.name ?? "Rose Martinez";
@@ -175,6 +212,26 @@ export function App() {
     ask: "Ask",
   };
 
+  const showBrowseChrome = tab === "today" || tab === "timeline";
+  const activeFilterCount =
+    (sourceFilter ? 1 : 0) + (personFilter ? 1 : 0) + (periodFilter ? 1 : 0);
+
+  const sidebarProps = {
+    stats,
+    timeline,
+    people,
+    messageSenders,
+    sourceFilter,
+    personFilter,
+    periodFilter,
+    query,
+    onSourceChange: handleSourceChange,
+    onPersonFilterChange: handlePersonFilterChange,
+    onPeriodChange: handlePeriodChange,
+    onQueryChange: setQuery,
+    onSearch: handleSearch,
+  };
+
   return (
     <div className="app">
       {!onboardingDone && <OnboardingModal onComplete={markOnboardingDone} />}
@@ -217,65 +274,18 @@ export function App() {
         </div>
       )}
 
-      <StatsBar stats={stats} activeSource={sourceFilter} onSourceChange={handleSourceChange} />
+      <AppNav tab={tab} tabLabels={tabLabels} onTabChange={setTab} />
 
-      <nav className="tabs desktop-tabs">
-        {(["today", "timeline", "photos", "profile", "collections", "map", "import", "ask"] as Tab[]).map((t) => (
+      {showBrowseChrome && (
+        <div className="browse-toolbar-mobile">
           <button
-            key={t}
             type="button"
-            className={tab === t ? "tab active" : "tab"}
-            onClick={() => setTab(t)}
+            className="hero-btn hero-btn--secondary filter-toggle-btn"
+            onClick={() => setSidebarOpen(true)}
           >
-            {tabLabels[t]}
+            Explore & filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
           </button>
-        ))}
-      </nav>
-
-      {tab !== "ask" &&
-        tab !== "import" &&
-        tab !== "collections" &&
-        tab !== "map" &&
-        tab !== "photos" &&
-        tab !== "profile" && (
-        <section className="toolbar">
-          <form className="search-form" onSubmit={handleSearch}>
-            <input
-              type="search"
-              placeholder={sourceFilter ? `Search in ${SOURCE_LABELS[sourceFilter] ?? "source"}…` : "Search memories…"}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <button type="submit">Search</button>
-          </form>
-          <select
-            value={sourceFilter}
-            onChange={(e) => handleSourceChange(e.target.value)}
-            aria-label="Filter by source"
-          >
-            <option value="">All sources</option>
-            {Object.entries(SOURCE_LABELS).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v}
-                {SOURCE_THEMES[k]?.layout !== "default" ? " — platform view" : ""}
-              </option>
-            ))}
-          </select>
-          {messageSenders.length > 0 && (
-            <select
-              value={personFilter}
-              onChange={(e) => setPersonFilter(e.target.value)}
-              aria-label="Filter by person"
-            >
-              <option value="">All people</option>
-              {messageSenders.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-          )}
-        </section>
+        </div>
       )}
 
       {error && tab !== "import" && (
@@ -306,99 +316,96 @@ export function App() {
             people={people}
             onItemsChange={setAllItems}
           />
-        ) : tab === "profile" && memorial ? (
-          <ProfileView
-            memorial={memorial}
-            people={people}
-            onUpdated={(m, p) => {
-              setMemorial(m);
-              setPeople(p);
-            }}
-          />
+        ) : tab === "profile" ? (
+          memorial ? (
+            <ProfileView
+              memorial={memorial}
+              people={people}
+              onUpdated={(m, p) => {
+                setMemorial(m);
+                setPeople(p);
+              }}
+            />
+          ) : (
+            <p className="loading">Loading profile…</p>
+          )
         ) : tab === "map" ? (
           <MapView
             pins={mapPins}
             onSelect={(item) => scrollToMemory(item.id)}
           />
-        ) : loading ? (
-          <p className="loading">Loading memories…</p>
-        ) : tab === "today" ? (
-          <OnThisDayView
-            items={sourceFilter ? displayItems : todayItems}
-            dateLabel={todayLabel}
-          />
-        ) : displayItems.length === 0 ? (
-          <div className="empty">
-            <h2>No memories yet</h2>
-            <p>
-              Go to the <button type="button" className="link-btn" onClick={() => setTab("import")}>Import</button> tab
-              or run <code>npm run poc</code> for demo data.
-            </p>
-          </div>
-        ) : (
-          <div className={`layout ${usePlatformView ? "layout--platform" : ""}`}>
-            {!usePlatformView && (
-              <aside className="sidebar">
-                <h3>Through the years</h3>
-                <ul className="year-list">
-                  {timeline.map((p) => (
-                    <li key={p.period}>
-                      <span>{p.period}</span>
-                      <span className="count">{p.count}</span>
-                    </li>
-                  ))}
-                </ul>
-              </aside>
-            )}
-            <section className="feed">
-              {searchResults !== null && (
-                <p className="search-results-label">
-                  {displayItems.length} result{displayItems.length === 1 ? "" : "s"} for “{query}”
-                  {sourceFilter && ` in ${SOURCE_LABELS[sourceFilter]}`}
-                  <button type="button" className="link-btn" onClick={() => { setSearchResults(null); setQuery(""); }}>
-                    Clear
-                  </button>
-                </p>
-              )}
-              {usePlatformView && activeTheme && (
+        ) : showBrowseChrome ? (
+          <div className="browse-layout">
+            <BrowseSidebar
+              {...sidebarProps}
+              mobileOpen={sidebarOpen}
+              onMobileClose={() => setSidebarOpen(false)}
+            />
+            <div className="browse-content">
+              {loading ? (
+                <p className="loading">Loading memories…</p>
+              ) : tab === "today" ? (
+                <OnThisDayView
+                  items={sourceFilter || personFilter || periodFilter ? displayItems : todayItems}
+                  dateLabel={todayLabel}
+                />
+              ) : displayItems.length === 0 ? (
+                <div className="empty">
+                  <h2>No memories match</h2>
+                  <p>Try clearing filters in the sidebar or import more data.</p>
+                </div>
+              ) : (
                 <>
-                  <p className="platform-view-label">
-                    Viewing as <strong>{activeTheme.label}</strong> · scroll to explore all memories
-                  </p>
-                  <div className={`platform-shell ${activeTheme.themeClass}`}>
-                    <PlatformChrome theme={activeTheme} subjectName={subjectName} />
-                    <div className="platform-scroll">
-                      {sourceFilter === "meta_instagram" ? (
-                        <InstagramPlatformView
-                          items={displayItems}
-                          theme={activeTheme}
-                          subjectName={subjectName}
+                  {searchResults !== null && (
+                    <p className="search-results-label">
+                      {displayItems.length} result{displayItems.length === 1 ? "" : "s"} for “{query}”
+                      {sourceFilter && ` in ${SOURCE_LABELS[sourceFilter]}`}
+                      <button type="button" className="link-btn" onClick={() => { setSearchResults(null); setQuery(""); }}>
+                        Clear
+                      </button>
+                    </p>
+                  )}
+                  {usePlatformView && activeTheme ? (
+                    <>
+                      <p className="platform-view-label">
+                        Viewing as <strong>{activeTheme.label}</strong>
+                      </p>
+                      <div className={`platform-shell ${activeTheme.themeClass}`}>
+                        <PlatformChrome theme={activeTheme} subjectName={subjectName} />
+                        <div className="platform-scroll">
+                          {sourceFilter === "meta_instagram" ? (
+                            <InstagramPlatformView
+                              items={displayItems}
+                              theme={activeTheme}
+                              subjectName={subjectName}
+                            />
+                          ) : (
+                            <PlatformFeed
+                              items={displayItems}
+                              theme={activeTheme}
+                              subjectName={subjectName}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    displayItems.map((item) => (
+                      <div key={item.id} id={`memory-${item.id}`} className="memory-anchor fade-in">
+                        <MemoryCard
+                          item={item}
+                          sourceLabel={SOURCE_LABELS[item.source] ?? item.source}
+                          typeLabel={TYPE_LABELS[item.type] ?? item.type}
+                          onImageClick={(src, alt) => setLightbox({ src, alt })}
                         />
-                      ) : (
-                        <PlatformFeed
-                          items={displayItems}
-                          theme={activeTheme}
-                          subjectName={subjectName}
-                        />
-                      )}
-                    </div>
-                  </div>
+                      </div>
+                    ))
+                  )}
                 </>
               )}
-              {!usePlatformView &&
-                displayItems.map((item) => (
-                  <div key={item.id} id={`memory-${item.id}`} className="memory-anchor fade-in">
-                    <MemoryCard
-                      item={item}
-                      sourceLabel={SOURCE_LABELS[item.source] ?? item.source}
-                      typeLabel={TYPE_LABELS[item.type] ?? item.type}
-                      onImageClick={(src, alt) => setLightbox({ src, alt })}
-                    />
-                  </div>
-                ))}
-            </section>
+            </div>
           </div>
-        )}
+        ) : null}
       </main>
 
       <MobileNav tab={tab} onTabChange={setTab} />

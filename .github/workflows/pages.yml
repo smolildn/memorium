@@ -38,6 +38,9 @@ jobs:
       - name: Generate bundled demo data
         run: node scripts/generate-static-demo.mjs
 
+      - name: Copy face recognition models
+        run: node scripts/setup-face-models.mjs
+
       - name: Build web app (demo mode)
         run: npm run build --workspace=@memorium/web
         env:
